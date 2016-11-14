@@ -196,6 +196,37 @@ function love.draw ()
 			end
 			_imgui.Spacing ()
 		end
+		
+		if (_imgui.CollapsingHeader ("Drawing")) then
+			_imgui.Text ("Position")
+			_imgui.DragInt2 ("x, y", count, count)
+			_imgui.Spacing ()
+			
+			_imgui.Text ("Orientation")
+			_imgui.DragFloat ("radian", count)
+			_imgui.Spacing ()
+			
+			_imgui.Text ("Scale")
+			_imgui.DragFloat2 ("x, y", count, count)
+			_imgui.Spacing ()
+			
+			_imgui.Text ("Origin")
+			_imgui.DragInt2 ("x, y", count, count)
+			_imgui.Spacing ()
+			
+			_imgui.Text ("Shearing")
+			_imgui.DragFloat2 ("x, y", count, count)
+			_imgui.Spacing ()
+			
+			_imgui.Text ("Color")
+			_imgui.ColorEdit4 ("", 1, 1, 1, 1)
+			_imgui.Spacing ()
+			
+			_imgui.Text ("Blendmode")
+			_imgui.Combo ("normal mode", combo, "alpha\0replace\0screen\0add\0subtract\0multiply\0lighten\0darken\0")
+			_imgui.Combo ("alpha mode", combo, "alphamultiply\0premultiplied\0")
+			_imgui.Spacing ()
+		end
 	_imgui.End ()
 	
 	_imgui.SetNextWindowPos (0, 0)
@@ -244,16 +275,34 @@ function love.draw ()
 			_imgui.Text ("Background Image's path")
 			_imgui.Spacing ()
 			
-			_imgui.Text ("Debugger Switch")
-			_imgui.Checkbox ("Show FPS", check)
-			_imgui.Checkbox ("Show tips", check)
+			_imgui.Text ("Display")
+			_imgui.Text ("FPS: " .. love.timer.getFPS ())
+			_imgui.Text ("Live count: " .. love.timer.getFPS ())
 			_imgui.Spacing ()
 		end
 		
 		if (_imgui.CollapsingHeader ("Help")) then
-			_imgui.Text ("About Editor")
+			_imgui.Text ("About Particle Editor")
 			_imgui.TextWrapped ("  This is a editor of particle for LÖVE. It be entrusted on the Coding.net. (https://git.coding.net/musoucrow/ParticleEditor.git)")
 			_imgui.TextWrapped ("  It is licensed under the MIT License, see LICENSE for more information.")
+			_imgui.Separator ()
+			
+			_imgui.Text ("Keyboard Shortcuts")
+				_imgui.Spacing ()
+				_imgui.Text ("Space")
+				_imgui.Text ("Pause/Restart the Particle Object's animation.")
+				_imgui.Spacing ()
+				
+				_imgui.Text ("Enter")
+				_imgui.Text ("Reset the Particle Object's animation.")
+				_imgui.Spacing ()
+				
+				_imgui.Text ("Up(Down) Arrow")
+				_imgui.Text ("Switch a Particle Object.")
+				_imgui.Spacing ()
+				
+				_imgui.Text ("Right Click")
+				_imgui.Text ("Move the Particle Object.")
 			_imgui.Separator ()
 			
 			_imgui.Text ("How to use?")
