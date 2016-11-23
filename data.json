@@ -1,0 +1,45 @@
+{
+    "bufferSize": 0,
+    "emissionLifetime": -1,
+    "emissionRate": 0,
+    "areaSpread": {
+        "distribution": "none",
+		"distance": [0, 0]
+    },
+    "insertMode": "top",
+    "offset": [0, 0],
+    "direction": 0,
+    "spread": 0,
+    "quads": [],
+    "speed": [0, 0],
+    "particleLifetime": [0, 0],
+    "radialAcceleration": [0, 0],
+    "tangentialAcceleration": [0, 0],
+    "linearDamping": [0, 0],
+    "linearAcceleration": {
+		"min": [0, 0],
+		"max": [0, 0]
+    },
+    "spin": {
+		"interval": [0, 0],
+        "variation": 0
+    },
+    "rotation": {
+		"interval": [0, 0],
+        "enable": false
+    },
+    "colors": [],
+    "sizes": [],
+    "drawing": {
+        "position": [0, 0],
+        "orientation": 0,
+        "scale": [1, 1],
+        "origin": [0, 0],
+        "shearing": [0, 0],
+        "color": [255, 255, 255, 255],
+        "blendmode": {
+            "normal": "alpha",
+            "alpha": "alphamultiply"
+        }
+    }
+}

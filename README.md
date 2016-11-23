@@ -27,5 +27,5 @@
 ### How to use?
 * In ParticleEditor, you can make some Particle File to give your project to use.
 * The Particle File's format is JSON, so you need to use the library of CJSON. (Already be included in the **lib** folder)
-* You can use the specially function in the **make.lua** to load Particle File and then to create Particle System object.
+* You can use the specially function in the **load.lua** to load Particle File and then to create Particle System object.
 * The Particle File doesn't have Texture data and Drawing data, so you need to prepare yourself.

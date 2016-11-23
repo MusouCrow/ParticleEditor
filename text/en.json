@@ -1,0 +1,395 @@
+{
+	"button": {
+		"add": "Add",
+		"remove": "Remove",
+		"image": "Open a image file"
+	},
+    "inspector": {
+        "title": "Inspector",
+        "necessity": {
+            "title": "Necessity",
+            "texture": {
+                "title": "Texture",
+                "tip": "Sets the texture (Image) to be used for the particles."
+            },
+            "bufferSize": {
+                "title": "Buffer Size",
+                "tip": "Sets the size of the buffer (the max allowed amount of particles in the system).",
+                "size": {
+                    "title": "size",
+                    "tip": "The buffer size."
+                }
+            },
+            "emissionLifetime": {
+                "title": "Emission Lifetime",
+                "tip": "Sets how long the particle system should emit particles (if -1 then it emits particles forever).",
+                "life": {
+                    "title": "life",
+                    "tip": "The lifetime of the emitter (in seconds)."
+                }
+            },
+            "emissionRate": {
+                "title": "Emission Lifetime",
+                "tip": "Sets the amount of particles emitted per second.",
+                "rate": {
+                    "title": "rate",
+                    "tip": "The amount of particles per second."
+                }
+            }
+        },
+        "outward": {
+            "title": "Outward",
+            "areaSpread": {
+                "title": "Area Spread",
+                "tip": "Sets area-based spawn parameters for the particles. Newly created particles will spawn in an area around the emitter based on the parameters to this function.",
+                "distribution": {
+                    "title": "distribution",
+                    "tip": "The type of distribution for new particles.",
+                    "items": [
+                        "uniform",
+                        "normal",
+                        "ellipse",
+                        "none"
+                    ]
+                },
+                "dx_dy": {
+                    "title": "dx, dy",
+                    "tip": "The maximum spawn distance from the emitter along the x(y)-axis for uniform distribution, or the standard deviation along the x(y)-axis for normal distribution."
+                }
+            },
+            "insertMode": {
+                "title": "Insert Mode",
+                "tip": "Sets the mode to use when the ParticleSystem adds new particles.",
+                "mode": {
+                    "title": "mode",
+                    "tip": "The mode to use when the ParticleSystem adds new particles.",
+                    "items": [
+                        "top",
+                        "bottom",
+                        "random"
+                    ]
+                }
+            },
+            "offset": {
+                "title": "Offset",
+                "tip": "Set the offset position which the particle sprite is rotated around. If this function is not used, the particles rotate around their center.",
+                "x_y": {
+                    "title": "x, y",
+                    "tip": "The x(y) coordinate of the rotation offset."
+                }
+            },
+            "direction": {
+                "title": "Direction",
+                "tip": "Sets the direction the particles will be emitted in.",
+                "direction": {
+                   "title": "direction",
+                   "tip": "The direction of the particles (in radians)."
+                }
+            },
+            "spread": {
+                "title": "Spread",
+                "tip": "Sets the amount of spread for the system.",
+                "spread": {
+                    "title": "spread",
+                    "tip": "The amount of spread (radians)."
+                }
+            },
+            "quads": {
+                "title": "Quads",
+                "tip": "Sets a series of Quads to use for the particle sprites. Particles will choose a Quad from the list based on the particle's current lifetime, allowing for the use of animated sprite sheets with ParticleSystems.",
+                "x_w_sw": {
+                    "title": "x, w, sw",
+                    "tip": [
+                        "x: The top-left position in the Image along the x-axis.",
+                        "w: The width of the Quad in the Image.",
+                        "sw: The reference width, the width of the Image. (Must be greater than 0.)"
+                    ]
+                },
+                "y_h_sy": {
+                    "title": "y, h, sy",
+                    "tip": [
+                        "y: The top-left position in the Image along the y-axis.",
+                        "h: The height of the Quad in the Image. (Must be greater than 0.)",
+                        "sh: The reference height, the height of the Image. (Must be greater than 0.)"
+                    ]
+                }
+            }
+        },
+        "motion": {
+            "title": "Motion",
+            "speed": {
+                "title": "Speed",
+                "tip": "Sets the speed of the particles.",
+                "min_max": {
+                    "title": "min, max",
+                    "tip": "The minimum(maximum) linear speed of the particles."
+                }
+            },
+            "particleLifetime": {
+                "title": "Particle Lifetime",
+                "tip": "Sets the lifetime of the particles.",
+                "min_max": {
+                    "title": "min, max",
+                    "tip": "The minimum(maximum) life of the particles (in seconds)."
+                }
+            },
+            "radialAcceleration": {
+                "title": "Radial Acceleration",
+                "tip": "Set the radial acceleration (away from the emitter).",
+                "min_max": {
+                    "title": "min, max",
+                    "tip": "The minimum(maximum) acceleration."
+                }
+            },
+            "tangentialAcceleration": {
+                "title": "Tangential Acceleration",
+                "tip": "Sets the tangential acceleration (acceleration perpendicular to the particle's direction).",
+                "min_max": {
+                    "title": "min, max",
+                    "tip": "The minimum(maximum) acceleration."
+                }
+            },
+            "linearDamping": {
+                "title": "Linear Damping",
+                "tip": "Sets the amount of linear damping (constant deceleration) for particles.",
+                "min_max": {
+                    "title": "min, max",
+                    "tip": "The minimum(maximum) amount of linear damping applied to particles."
+                }
+            },
+            "linearAcceleration": {
+                "title": "Linear Acceleration",
+                "tip": "Sets the linear acceleration (acceleration along the x and y axes) for particles. Every particle created will accelerate along the x and y axes between xmin,ymin and xmax,ymax.",
+                "min": {
+                    "title": "xmin, ymin",
+                    "tip": "The minimum acceleration along the x(y) axis."
+                },
+                "max": {
+                    "title": "xmax, ymax",
+                    "tip": "The maximum acceleration along the x(y) axis."
+                }
+            },
+            "spin": {
+                "title": "Spin",
+                "tip": "Sets the spin of the sprite.",
+                "min_max": {
+                    "title": "min, max",
+                    "tip": "The minimum(maximum) spin (radians per second)."
+                },
+                "variation": {
+                    "title": "variation",
+                    "tip": "The amount of variation (0 meaning no variation and 1 meaning full variation between start and end)."
+                }
+            },
+            "rotation": {
+                "title": "Rotation",
+                "tip": "Sets the rotation of the image upon particle creation (in radians).",
+                "enable": {
+                    "title": "enable",
+                    "tip": "True to enable relative particle rotation, false to disable it."
+                },
+                "min_max": {
+                    "title": "min, max",
+                    "tip": "The minimum(maximum) initial angle (radians)."
+                }
+            },
+            "colors": {
+                "title": "Colors",
+                "tip": "Sets a series of colors to apply to the particle sprite. The particle system will interpolate between each color evenly over the particle's lifetime."
+            },
+            "sizes": {
+                "title": "Sizes",
+                "tip": "Sets a series of sizes by which to scale a particle sprite. 1.0 is normal size. The particle system will interpolate between each size evenly over the particle's lifetime.",
+                "variation": {
+                    "title": "variation",
+                    "tip": "The amount of variation (0 meaning no variation and 1 meaning full variation between start and end)."
+                }
+            }
+        },
+        "drawing": {
+            "title": "Drawing",
+            "position": {
+                "title": "Position",
+                "tip": "The position to draw the object.",
+                "param": "x, y"
+            },
+            "orientation": {
+                "title": "Orientation",
+                "tip": "Orientation (radians).",
+                "param": "radian"
+            },
+            "scale": {
+                "title": "Scale",
+                "tip": "Scale factor.",
+                "param": "x, y"
+            },
+            "origin": {
+                "title": "Origin",
+                "tip": "Origin factor.",
+                "param": "x, y"
+            },
+            "shearing": {
+                "title": "Shearing",
+                "tip": "Shearing factor.",
+                "param": "x, y"
+            },
+            "color": {
+                "title": "Color",
+                "tip": "Sets the color used for drawing."
+            },
+            "blendmode": {
+                "title": "Blendmode",
+                "tip": "Sets the blending mode.",
+                "normalMode": {
+                    "title": "normal mode",
+                    "tip": "The blend mode to use.",
+                    "items": [
+                        "alpha",
+                        "replace",
+                        "screen",
+                        "add",
+                        "subtract",
+                        "multiply",
+                        "lighten",
+                        "darken"
+                    ]
+                },
+                "alphaMode": {
+                    "title": "alpha Mode",
+                    "tip": "What to do with the alpha of drawn objects when blending.",
+                    "items": [
+                        "alphamultiply",
+                        "premultiplied"
+                    ]
+                }
+            }
+        }
+    },
+    "synthesis": {
+        "title": "Synthesis",
+        "hierarchy": {
+            "title": "Hierarchy",
+            "operation": {
+                "title": "Operation",
+				"tip": "Operate the List and Particle Object.",
+                "addition": {
+                    "title": "Addition",
+                    "new": {
+						"title": "New",
+						"tip": "Create a new Particle Object."
+					},
+                    "open": {
+						"title": "Open",
+						"tip": "Open a Particle File to create a Particle Object."
+					},
+                    "clone": {
+						"title": "Clone",
+						"tip": "Clone the selected Particle Object to create a Particle Object."
+					}
+                },
+                "animation": {
+                    "title": "Animation",
+                    "reset": {
+						"title": "Reset",
+						"tip": "Reset the selected animation of Particle Object."
+					},
+                    "pause": {
+						"title": "Pause",
+						"tip": "Pause the selected animation of Particle Object."
+					}
+                },
+                "order": {
+                    "title": "Order",
+                    "up": {
+						"title": "Up",
+						"tip": "Move up the selected order of Particle Object in List."
+					},
+                    "down": {
+						"title": "Down",
+						"tip": "Move down the selected order of Particle Object in List."
+					}
+                },
+                "other": {
+                    "title": "Other",
+                    "save": {
+						"title": "Save",
+						"tip": "Save the selected Particle Object to a Particle File."
+					},
+                    "remove": {
+						"title": "Remove",
+						"tip": "Remove the selected Particle Object in List."
+					}
+                }
+            },
+            "list": {
+                "title": "List",
+				"tip": "Show all Particle Object, and select one Particle Object to operate.",
+                "newMemberName": "Particle Object"
+            }
+        },
+        "opinions": {
+            "title": "Opinions",
+            "backgroundImage": {
+				"title": "Background Image",
+				"tip": "Sets the image to be changed for the background."
+			},
+            "backgroundColor": {
+				"title": "Background Color",
+				"tip": "Change the color of background."
+			},
+            "display": {
+                "title": "Display",
+				"tip": "Display some global properties.",
+				"fps": {
+					"title": "FPS: ",
+					"tip": "The current frames per second."
+				},
+				"liveCount": {
+					"title": "Live Count: ",
+					"tip": "The current number of live particles."
+				}
+            }
+        },
+        "help": {
+            "title": "Help",
+            "about": {
+                "title": "About Particle Editor",
+                "text": [
+                    "  This is a editor of particle for LÖVE. It be entrusted on the Coding.net. (https://git.coding.net/musoucrow/ParticleEditor.git)",
+                    "  It is licensed under the MIT License, see LICENSE for more information."
+                ]
+            },
+            "keyboard": {
+                "title": "Keyboard Shortcuts",
+				"list": [
+					{
+						"title": "Space",
+						"text": "Pause/Restart the Particle Object's animation."
+					},
+					{
+						"title": "Enter",
+						"text": "Reset the Particle Object's animation."
+					},
+					{
+						"title": "Up(Down) Arrow",
+						"text": "Switch a Particle Object."
+					},
+					{
+						"title": "Right Click",
+						"text": "Move the Particle Object."
+					}
+				]
+            },
+            "use": {
+                "title": "How to use?",
+                "text": [
+                    "  In ParticleEditor, you can make some Particle File to give your project to use.",
+                    "  The Particle File's format is JSON, so you need to use the library of CJSON in your project.(Already be included in the lib folder)",
+                    "  You can use the specially function in the load.lua to load Particle File and then to create Particle System object.",
+                    "  The Particle File doesn't have Texture data, so you need to prepare yourself.",
+                    "  Lastly, you need to see the README.md to learn more."
+                ]
+            }
+        }
+    }
+}
