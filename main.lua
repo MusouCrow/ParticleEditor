@@ -1,6 +1,7 @@
 local _interface = require ("module.interface")
-local _file = require ("module.file")
+local _utility = require ("module.utility")
 local _data = require ("module.data")
+local _display = require ("module.display")
 
 local function _HandleText (text)
 	for k, v in pairs (text) do
@@ -29,22 +30,24 @@ local function _HandleText (text)
 end
 
 function love.load ()
-	_file:Init (require ("cjson"))
-	_data:Init (_file)
+	_utility:Init (require ("cjson"))
+	_data:Init (_utility)
+	_display:Init (_data)
 	
-	local text = _file:Open ("text/en.json")
+	local text = _utility:OpenJson ("text/en.json")
 	_HandleText (text)
 	
 	_interface:Init (require ("imgui"), text, _data)
-	
-	love.graphics.setBackgroundColor (100, 100, 100, 255)
 end
 
 function love.update (dt)
+	_data:Update ()
+	_display:Update (dt)
 	_interface:Update ()
 end
 
 function love.draw ()
+	_display:Draw ()
 	_interface:Draw ()
 end
 
@@ -78,4 +81,8 @@ end
 
 function love.wheelmoved (x, y)
     _interface:WheelMoved (y)
+end
+
+function love.filedropped (file)
+	_interface:Filedropped (file)
 end

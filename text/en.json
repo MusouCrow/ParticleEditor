@@ -1,8 +1,20 @@
 {
 	"button": {
-		"add": "Add",
-		"remove": "Remove",
-		"image": "Open a image file"
+		"add": {
+			"title": "Add",
+			"tip": "Add a new member, but the max is 8."
+		},
+		"remove": {
+			"title": "Remove",
+			"tip": "Remove the member."
+		},
+		"image": {
+			"title": "Open a Image File",
+			"tip": "Click to show a Dialog, and then drag a Image File in the app window to open it."
+		}
+	},
+	"acceptFile": {
+		"image": "Please drag a image file into this app window to use it. (Press Escape key to exit.)"
 	},
     "inspector": {
         "title": "Inspector",
@@ -20,20 +32,20 @@
                     "tip": "The buffer size."
                 }
             },
-            "emissionLifetime": {
-                "title": "Emission Lifetime",
-                "tip": "Sets how long the particle system should emit particles (if -1 then it emits particles forever).",
-                "life": {
-                    "title": "life",
-                    "tip": "The lifetime of the emitter (in seconds)."
-                }
-            },
             "emissionRate": {
                 "title": "Emission Lifetime",
                 "tip": "Sets the amount of particles emitted per second.",
                 "rate": {
                     "title": "rate",
                     "tip": "The amount of particles per second."
+                }
+            },
+            "particleLifetime": {
+                "title": "Particle Lifetime",
+                "tip": "Sets the lifetime of the particles.",
+                "min_max": {
+                    "title": "min, max",
+                    "tip": "The minimum(maximum) life of the particles (in seconds)."
                 }
             }
         },
@@ -123,14 +135,6 @@
                 "min_max": {
                     "title": "min, max",
                     "tip": "The minimum(maximum) linear speed of the particles."
-                }
-            },
-            "particleLifetime": {
-                "title": "Particle Lifetime",
-                "tip": "Sets the lifetime of the particles.",
-                "min_max": {
-                    "title": "min, max",
-                    "tip": "The minimum(maximum) life of the particles (in seconds)."
                 }
             },
             "radialAcceleration": {
@@ -323,8 +327,7 @@
             },
             "list": {
                 "title": "List",
-				"tip": "Show all Particle Object, and select one Particle Object to operate.",
-                "newMemberName": "Particle Object"
+				"tip": "Show all Particle Object, and select one Particle Object to operate."
             }
         },
         "opinions": {

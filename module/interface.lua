@@ -12,6 +12,17 @@ function _module:Init (imgui, text, data)
 		normalMode = {alpha = 1, replace = 2, screen = 3, add = 4, subtract = 5, multiply = 6, lighten = 7, darken = 8},
 		alphaMode = {alphamultiply = 1, premultiplied = 2}
 	}
+	
+	local font = love.graphics.getFont ()
+	
+	self.acceptFile = {
+		open = false,
+		type = "texture",
+		image = {
+			width = font:getWidth (self.text.acceptFile.image) * 0.5,
+			height = font:getHeight (self.text.acceptFile.image) * 0.5
+		}
+	}
 end
 
 function _module:Update ()
@@ -44,7 +55,7 @@ end
 function _module:Drag (name, text, data, key, ...)
 	self:PushID ()
 	
-	local title
+	local title, isDragging
 	local isTab = type (text) == "table"
 	
 	if (isTab) then
@@ -54,9 +65,10 @@ function _module:Drag (name, text, data, key, ...)
 	end
 	
 	if (key) then
-		_, data [key] = self.imgui ["Drag" .. name] (title, data [key], ...)
+		isDragging, data [key] = self.imgui ["Drag" .. name] (title, data [key], ...)
 	else
 		local ret = {self.imgui ["Drag" .. name] (title, data [1], data [2], ...)}
+		isDragging = ret [1]
 		
 		for n=2, #ret do
 			data [n - 1] = ret [n]
@@ -68,6 +80,8 @@ function _module:Drag (name, text, data, key, ...)
 			self:HoveredTooltip (text.tip)
 		end 
 	end
+	
+	return isDragging
 end
 
 function _module:Combo (text, beadroll, data, key)
@@ -101,6 +115,8 @@ function _module:ColorEdit4 (color)
 	for n=2, #ret do
 		color [n - 1] = ret [n] * 255
 	end
+	
+	return ret [1]
 end
 
 function _module:Button (text, isSmall)
@@ -125,12 +141,19 @@ function _module:Button (text, isSmall)
 end
 
 function _module:Draw ()
-	local count = 0
-	local count2 = {0, 0}
-	local combo = 1
-	local check = false
-	local list = {"a", "b"}
-	
+	if (self.acceptFile.open) then
+		local w, h = love.graphics.getWidth (), love.graphics.getHeight ()
+		
+		love.graphics.setColor (0, 0, 0, 127)
+		love.graphics.rectangle ("fill", 0, 0, w, h)
+		love.graphics.setColor (255, 255, 255, 255)
+		love.graphics.print (self.text.acceptFile.image, w * 0.5 - self.acceptFile.image.width, h * 0.5 - self.acceptFile.image.height)
+	else
+		self:DrawWidget ()
+	end
+end
+
+function _module:DrawWidget ()
 	local inspector = self.text.inspector
 	local synthesis = self.text.synthesis
 	local button = self.text.button
@@ -143,21 +166,24 @@ function _module:Draw ()
 			local necessity = inspector.necessity
 			if (self.imgui.CollapsingHeader (necessity.title)) then
 				self:Title (necessity.texture)
-					self.imgui.Button (button.image)
+					if (self:Button (button.image)) then
+						self.acceptFile.open = true
+						self.acceptFile.type = "texture"
+					end
 					self.imgui.SameLine ()
-					self.imgui.Text ("...")
+					self.imgui.Text (data.textureName)
 				self.imgui.Spacing ()
 				
 				self:Title (necessity.bufferSize)
-					self:Drag ("Int", necessity.bufferSize.size, data, "bufferSize", 1, 0, _maxCount)
-				self.imgui.Spacing ()
-				
-				self:Title (necessity.emissionLifetime)
-					self:Drag ("Float", necessity.emissionLifetime.life, data, "emissionLifetime", 0.1, -1, _maxCount)
+					self.data.msg.bufferSize = self:Drag ("Int", necessity.bufferSize.size, data, "bufferSize", 1, 1, _maxCount)
 				self.imgui.Spacing ()
 				
 				self:Title (necessity.emissionRate)
 					self:Drag ("Float", necessity.emissionRate.rate, data, "emissionRate", 0.1, 0, _maxCount)
+				self.imgui.Spacing ()
+				
+				self:Title (necessity.particleLifetime)
+					self:Drag ("Float2", necessity.particleLifetime.min_max, data.particleLifetime, nil, 0.1, 0, _maxCount)
 				self.imgui.Spacing ()
 			end
 			
@@ -208,10 +234,6 @@ function _module:Draw ()
 					self:Drag ("Float2", motion.speed.min_max, data.speed)
 				self.imgui.Spacing ()
 				
-				self:Title (motion.particleLifetime)
-					self:Drag ("Float2", motion.particleLifetime.min_max, data.particleLifetime)
-				self.imgui.Spacing ()
-				
 				self:Title (motion.radialAcceleration)
 					self:Drag ("Float2", motion.radialAcceleration.min_max, data.radialAcceleration)
 				self.imgui.Spacing ()
@@ -242,13 +264,28 @@ function _module:Draw ()
 				self.imgui.Spacing ()
 				
 				if (self:Tree (motion.colors)) then
-					self.imgui.SameLine ()
-					self:Button (button.add, true)
-					for n=1, #data.colors do
-						self:ColorEdit4 (data.colors [n])
+					local activity = false
+					
+					if (#data.colors < 8) then
 						self.imgui.SameLine ()
-						self:Button (button.remove, true)
+						if (self:Button (button.add, true)) then
+							self.data:AddDataMember ("colors")
+							activity = true
+						end
 					end
+					
+					for n=1, #data.colors do
+						if (self:ColorEdit4 (data.colors [n])) then
+							activity = true
+						end
+						
+						self.imgui.SameLine ()
+						if (self:Button (button.remove, true)) then
+							self.data:RemoveDataMember ("colors", n)
+						end
+					end
+					
+					self.data.msg.colors = activity
 					self.imgui.TreePop ()
 					self.imgui.Spacing ()
 				end
@@ -336,26 +373,31 @@ function _module:Draw ()
 			
 			self:Title (hierarchy.list)
 				self.imgui.PushItemWidth (327)
-				self.imgui.ListBox ("", count, list, #list, #list)
+				local listCount = #self.data.nameList
+				self.imgui.ListBox ("", self.data.selectionID, self.data.nameList, listCount, listCount)
 			self.imgui.Spacing ()
 		end
 		
 		local opinions = synthesis.opinions
 		if (self.imgui.CollapsingHeader (opinions.title)) then
 			self:Title (opinions.backgroundImage)
-				self.imgui.Button (button.image)
+				if (self:Button (button.image)) then
+					self.acceptFile.open = true
+					self.acceptFile.type = "background"
+				end
+				
 				self.imgui.SameLine ()
-				self.imgui.Text ("...")
+				self.imgui.Text (self.data.background.fileName)
 			self.imgui.Spacing ()
 			
 			self:Title (opinions.backgroundColor)
-				self:ColorEdit4 ({255, 255, 255, 255})
+				self:ColorEdit4 (self.data.background.color)
 			self.imgui.Spacing ()
 			
 			self:Title (opinions.display)
 				self.imgui.Text (opinions.display.fps.title .. love.timer.getFPS ())
 				self:HoveredTooltip (opinions.display.fps.tip)
-				self.imgui.Text (opinions.display.liveCount.title .. love.timer.getFPS ())
+				self.imgui.Text (opinions.display.liveCount.title .. data.psi:getCount ())
 				self:HoveredTooltip (opinions.display.liveCount.tip)
 			self.imgui.Spacing ()
 		end
@@ -396,7 +438,18 @@ function _module:TextInput (text)
 	self.imgui.TextInput (text)
 end
 
+function _module:Filedropped (file)
+	if (self.acceptFile.open and file) then
+		self.data:SetImage (file, self.acceptFile.type)
+		self.acceptFile.open = false
+	end
+end
+
 function _module:KeyPressed (key)
+	if (self.acceptFile.open and key == "escape") then
+		self.acceptFile.open = false
+	end
+	
 	self.imgui.KeyPressed (key)
 end
 

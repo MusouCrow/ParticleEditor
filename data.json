@@ -1,7 +1,8 @@
 {
-    "bufferSize": 0,
-    "emissionLifetime": -1,
+	"textureName": "...",
+    "bufferSize": 1,
     "emissionRate": 0,
+	"particleLifetime": [0, 0],
     "areaSpread": {
         "distribution": "none",
 		"distance": [0, 0]
@@ -12,7 +13,6 @@
     "spread": 0,
     "quads": [],
     "speed": [0, 0],
-    "particleLifetime": [0, 0],
     "radialAcceleration": [0, 0],
     "tangentialAcceleration": [0, 0],
     "linearDamping": [0, 0],
