@@ -33,21 +33,23 @@ function _module:Update (dt)
 		psi:setRotation (unpack (data.rotation.interval))
 		psi:setRelativeRotation (data.rotation.enable)
 		
-		if (self.data.msg.quads) then
+		if (self.data.msg.quads and #data.quads > 0) then
 			psi:setQuads (unpack (data.quads))
 		end
 		
-		if (self.data.msg.colors) then
+		if (self.data.msg.colors and #data.colors > 0) then
 			psi:setColors (unpack (data.colors))
 		end
 		
-		if (self.data.msg.sizes) then
+		if (self.data.msg.sizes and #data.sizes > 0) then
 			psi:setSizes (unpack (data.sizes))
 		end
 	end
 	
 	for n=1, #self.data.list do
-		self.data.list [n].psi:update (dt)
+		if (not self.data.list [n].isPaused) then
+			self.data.list [n].psi:update (dt)
+		end
 	end
 end
 

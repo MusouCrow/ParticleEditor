@@ -20,6 +20,7 @@ function _module:Init (utility)
 		fileName = "...",
 		color = {100, 100, 100, 255}
 	}
+	
 	self.removeDataMember = {
 		type = "",
 		list = {
@@ -36,8 +37,8 @@ function _module:Init (utility)
 		quads = false
 	}
 	
-	self:New ()
-	self.selectionID = 1
+	--self:New ()
+	--self.selectionID = 1
 end
 
 function _module:Update ()
@@ -68,19 +69,29 @@ function _module:New ()
 	new.name = "Psi" .. self.newCount
 	new.drawing.position [1] = love.graphics.getWidth () * 0.5
 	new.drawing.position [2] = love.graphics.getHeight () * 0.5
+	new.isPaused = false
 	
 	self.list [#self.list + 1] = new
 	_RefreshNameList (self)
+	self.selectionID = #self.list
 end
 
 function _module:Clone ()
-	self.list [#self.list + 1] = self.utility:CopyTable (self.list [self.selectionID])
+	local clone = self.utility:CopyTable (self.list [self.selectionID])
+	clone.name = clone.name .. " -Clone"
+	self.list [#self.list + 1] = clone
+	
 	_RefreshNameList (self)
+	self.selectionID = #self.list
 end
 
 function _module:Remove ()
 	table.remove (self.list, self.selectionID)
 	_RefreshNameList (self)
+	
+	if (self.selectionID > #self.list or self.selectionID < #self.list) then
+		self.selectionID = #self.list
+	end
 end
 
 function _module:OrderUp ()
@@ -123,7 +134,16 @@ function _module:SetImage (file, type)
 	if (type == "texture") then
 		local data = self:GetSelection ()
 		data.psi:setTexture (image)
-		data.textureName = name
+		data.texture = {
+			name = name,
+			width = image:getWidth (),
+			height = image:getHeight ()
+		}
+		
+		for n=1, #data.quads do
+			local x, y, w, h = data.quads [n]:getViewport ()
+			data.quads [n] = love.graphics.newQuad (x, y, w, h, data.texture.width, data.texture.height)
+		end
 	elseif (type == "background") then
 		self.background.image = image
 		self.background.width = image:getWidth ()
@@ -133,20 +153,69 @@ function _module:SetImage (file, type)
 end
 
 function _module:AddDataMember (type)
-	local data = self:GetSelection () [type]
+	local data = self:GetSelection ()
+	local list = data [type]
 	
 	if (type == "colors") then
-		data [#data + 1] = {255, 255, 255, 255}
+		list [#list + 1] = {255, 255, 255, 255}
 	elseif (type == "sizes") then
-		data [#data + 1] = 1
+		list [#list + 1] = 1
 	elseif (type == "quads") then
-		data [#data + 1] = love.graphics.newQuad (0, 0, 0, 0, 0, 0)
+		if (data.texture) then
+			list [#list + 1] = love.graphics.newQuad (0, 0, data.texture.width, data.texture.height, data.texture.width, data.texture.height)
+		else
+			list [#list + 1] = love.graphics.newQuad (0, 0, 0, 0, 0, 0)
+		end
 	end
 end
 
 function _module:RemoveDataMember (type, id)
 	table.insert (self.removeDataMember.list [type], id)
 	self.removeDataMember.type = type
+end
+
+function _module:SetQuad (quad, x, y, w, h)
+	local data = self:GetSelection ()
+	local width = data.texture.width
+	local height = data.texture.height
+	
+	if (x > width) then
+		x = width
+	end
+	
+	if (x + w > width) then
+		w = width - x
+	end
+	
+	if (y > height) then
+		y = height
+	end
+	
+	if (y + h > height) then
+		h = height - y
+	end
+	
+	quad:setViewport (x, y, w, h)
+end
+
+function _module:CheckInterval (data)
+	if (data [2] < data [1]) then
+		data [2] = data [1]
+	end
+end
+
+function _module:CheckDoubleInterval (data)
+	for n=1, #data.max do
+		if (data.max [n] < data.min [n]) then
+			data.max [n] = data.min [n]
+		end
+	end
+end
+
+function _module:RunPsiEvent (name, ...)
+	local psi = self:GetSelection ().psi
+	
+	return psi [name] (psi, ...)
 end
 
 return _module

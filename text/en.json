@@ -13,7 +13,7 @@
 			"tip": "Click to show a Dialog, and then drag a Image File in the app window to open it."
 		}
 	},
-	"acceptFile": {
+	"messageBox": {
 		"image": "Please drag a image file into this app window to use it. (Press Escape key to exit.)"
 	},
     "inspector": {
@@ -33,7 +33,7 @@
                 }
             },
             "emissionRate": {
-                "title": "Emission Lifetime",
+                "title": "Emission Rate",
                 "tip": "Sets the amount of particles emitted per second.",
                 "rate": {
                     "title": "rate",
@@ -109,22 +109,12 @@
             "quads": {
                 "title": "Quads",
                 "tip": "Sets a series of Quads to use for the particle sprites. Particles will choose a Quad from the list based on the particle's current lifetime, allowing for the use of animated sprite sheets with ParticleSystems.",
-                "x_w_sw": {
-                    "title": "x, w, sw",
-                    "tip": [
-                        "x: The top-left position in the Image along the x-axis.",
-                        "w: The width of the Quad in the Image.",
-                        "sw: The reference width, the width of the Image. (Must be greater than 0.)"
-                    ]
-                },
-                "y_h_sy": {
-                    "title": "y, h, sy",
-                    "tip": [
-                        "y: The top-left position in the Image along the y-axis.",
-                        "h: The height of the Quad in the Image. (Must be greater than 0.)",
-                        "sh: The reference height, the height of the Image. (Must be greater than 0.)"
-                    ]
-                }
+                "member": {
+					"tip": [
+						"x, y: The top-left position in the Image along the x (y)-axis.",
+						"w, h: The width (height) of the Quad in the Image. (Must be greater than 0.)"
+					]
+				}
             }
         },
         "motion": {
@@ -300,6 +290,10 @@
                     "pause": {
 						"title": "Pause",
 						"tip": "Pause the selected animation of Particle Object."
+					},
+                    "resume": {
+						"title": "Resume",
+						"tip": "Resume the selected animation of Particle Object."
 					}
                 },
                 "order": {

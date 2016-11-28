@@ -140,6 +140,57 @@ function _module:Button (text, isSmall)
 	return false
 end
 
+function _module:MemberTree (text, type)
+	if (self:Tree (text)) then
+		local activity = false
+		local list = self.data:GetSelection () [type]
+		local canRemove = #list > 1
+		
+		if (#list < 8) then
+			self.imgui.SameLine ()
+			if (self:Button (self.text.button.add, true)) then
+				self.data:AddDataMember (type)
+				activity = true
+			end
+		end
+		
+		for n=1, #list do
+			local ret = false
+			
+			if (type == "colors") then
+				ret = self:ColorEdit4 (list [n])
+			elseif (type == "sizes") then
+				self:PushID ()
+				ret, list [n] = self.imgui.DragFloat ("", list [n], 0.1, 0, _maxCount)
+			elseif (type == "quads") then
+				self:PushID ()
+				local x, y, w, h = list [n]:getViewport ()
+				ret, x, y, w, h = self.imgui.DragInt4 ("", x, y, w, h, 1, 0, _maxCount)
+				self:HoveredTooltip (self.text.inspector.outward.quads.member.tip)
+				
+				if (ret) then
+					self.data:SetQuad (list [n], x, y, w, h)
+				end
+			end
+			
+			if (ret) then
+				activity = true
+			end
+			
+			if (canRemove) then
+				self.imgui.SameLine ()
+				if (self:Button (self.text.button.remove, true)) then
+					self.data:RemoveDataMember (type, n)
+				end
+			end
+		end
+		
+		self.data.msg [type] = activity
+		self.imgui.TreePop ()
+		self.imgui.Spacing ()
+	end
+end
+
 function _module:Draw ()
 	if (self.acceptFile.open) then
 		local w, h = love.graphics.getWidth (), love.graphics.getHeight ()
@@ -171,7 +222,11 @@ function _module:DrawWidget ()
 						self.acceptFile.type = "texture"
 					end
 					self.imgui.SameLine ()
-					self.imgui.Text (data.textureName)
+					if (data.texture) then
+						self.imgui.Text (data.texture.name)
+					else
+						self.imgui.Text ("...")
+					end
 				self.imgui.Spacing ()
 				
 				self:Title (necessity.bufferSize)
@@ -184,155 +239,114 @@ function _module:DrawWidget ()
 				
 				self:Title (necessity.particleLifetime)
 					self:Drag ("Float2", necessity.particleLifetime.min_max, data.particleLifetime, nil, 0.1, 0, _maxCount)
+					self.data:CheckInterval (data.particleLifetime)
 				self.imgui.Spacing ()
 			end
 			
-			local outward = inspector.outward
-			if (self.imgui.CollapsingHeader (outward.title)) then
-				self:Title (outward.areaSpread)
-					self:Combo (outward.areaSpread.distribution, self.combo.areaSpread, data.areaSpread, "distribution")
-					self:Drag ("Float2", outward.areaSpread.dx_dy, data.areaSpread.distance)
-				self.imgui.Spacing ()
-				
-				self:Title (outward.insertMode)
-					self:Combo (outward.insertMode.mode, self.combo.insertMode, data, "insertMode")
-				self.imgui.Spacing ()
-				
-				self:Title (outward.offset)
-					self:Drag ("Int2", outward.offset.x_y, data.offset)
-				self.imgui.Spacing ()
-				
-				self:Title (outward.direction)
-					self:Drag ("Float", outward.direction.direction, data, "direction")
-				self.imgui.Spacing ()
-				
-				self:Title (outward.spread)
-					self:Drag ("Float", outward.spread.spread, data, "spread")
-				self.imgui.Spacing ()
-				
-				if (self:Tree (outward.quads)) then
-					self.imgui.SameLine ()
-					self:Button (button.add, true)
-						for n=1, #data.quads do
-							if (self:Tree (n)) then
-								local quad = data.quads [n]
-								self.imgui.SameLine ()
-								self:Button (button.remove, true)
-								_, quad.x, quad.w, quad.sw = self.imgui.DragInt3 (outward.quads.x_w_sw, quad.x, quad.w, quad.sw, 1, 0, _maxCount)
-								_, quad.y, quad.h, quad.sh = self.imgui.DragInt3 (outward.quads.y_h_sy, quad.y, quad.h, quad.sh, 1, 0, _maxCount)
-								self.imgui.TreePop ()
-							end
-						end
-					self.imgui.TreePop ()
+			if (data.texture) then
+				local outward = inspector.outward
+				if (self.imgui.CollapsingHeader (outward.title)) then
+					self:Title (outward.areaSpread)
+						self:Combo (outward.areaSpread.distribution, self.combo.areaSpread, data.areaSpread, "distribution")
+						self:Drag ("Float2", outward.areaSpread.dx_dy, data.areaSpread.distance, nil, 0.1, 0, _maxCount)
 					self.imgui.Spacing ()
-				end
-			end
-			
-			local motion = inspector.motion
-			if (self.imgui.CollapsingHeader (motion.title)) then
-				self:Title (motion.speed)
-					self:Drag ("Float2", motion.speed.min_max, data.speed)
-				self.imgui.Spacing ()
-				
-				self:Title (motion.radialAcceleration)
-					self:Drag ("Float2", motion.radialAcceleration.min_max, data.radialAcceleration)
-				self.imgui.Spacing ()
-				
-				self:Title (motion.tangentialAcceleration)
-					self:Drag ("Float2", motion.tangentialAcceleration.min_max, data.tangentialAcceleration)
-				self.imgui.Spacing ()
-				
-				self:Title (motion.linearDamping)
-					self:Drag ("Float2", motion.linearDamping.min_max, data.linearDamping)
-				self.imgui.Spacing ()
-				
-				self:Title (motion.linearAcceleration)
-					self:Drag ("Float2", motion.linearAcceleration.min, data.linearAcceleration.min)
-					self:Drag ("Float2", motion.linearAcceleration.max, data.linearAcceleration.max)
-				self.imgui.Spacing ()
-				
-				self:Title (motion.spin)
-					self:Drag ("Float2", motion.spin.min_max, data.spin.interval)
-					self:Drag ("Float", motion.spin.variation, data.spin, "variation", 0.1, 0, 1)
-				self.imgui.Spacing ()
-				
-				self:Title (motion.rotation)
-					self.imgui.SameLine ()
-					_, data.rotation.enable = self.imgui.Checkbox (motion.rotation.enable.title, data.rotation.enable)
-					self:HoveredTooltip (motion.rotation.enable.tip)
-					self:Drag ("Float2", motion.rotation.min_max, data.rotation.interval)
-				self.imgui.Spacing ()
-				
-				if (self:Tree (motion.colors)) then
-					local activity = false
 					
-					if (#data.colors < 8) then
-						self.imgui.SameLine ()
-						if (self:Button (button.add, true)) then
-							self.data:AddDataMember ("colors")
-							activity = true
-						end
-					end
-					
-					for n=1, #data.colors do
-						if (self:ColorEdit4 (data.colors [n])) then
-							activity = true
-						end
-						
-						self.imgui.SameLine ()
-						if (self:Button (button.remove, true)) then
-							self.data:RemoveDataMember ("colors", n)
-						end
-					end
-					
-					self.data.msg.colors = activity
-					self.imgui.TreePop ()
+					self:Title (outward.insertMode)
+						self:Combo (outward.insertMode.mode, self.combo.insertMode, data, "insertMode")
 					self.imgui.Spacing ()
+					
+					self:Title (outward.offset)
+						self:Drag ("Int2", outward.offset.x_y, data.offset)
+					self.imgui.Spacing ()
+					
+					self:Title (outward.direction)
+						self:Drag ("Float", outward.direction.direction, data, "direction")
+					self.imgui.Spacing ()
+					
+					self:Title (outward.spread)
+						self:Drag ("Float", outward.spread.spread, data, "spread")
+					self.imgui.Spacing ()
+					
+					self:MemberTree (outward.quads, "quads")
 				end
 				
-				if (self:Tree (motion.sizes)) then
-					self.imgui.SameLine ()
-					self:Button (button.add, true)
-					for n=1, #data.sizes do
-						_, data.sizes [n] = self.imgui.DragFloat ("", data.sizes [n])
+				local motion = inspector.motion
+				if (self.imgui.CollapsingHeader (motion.title)) then
+					self:Title (motion.speed)
+						self:Drag ("Float2", motion.speed.min_max, data.speed)
+						self.data:CheckInterval (data.speed)
+					self.imgui.Spacing ()
+					
+					self:Title (motion.radialAcceleration)
+						self:Drag ("Float2", motion.radialAcceleration.min_max, data.radialAcceleration)
+						self.data:CheckInterval (data.radialAcceleration)
+					self.imgui.Spacing ()
+					
+					self:Title (motion.tangentialAcceleration)
+						self:Drag ("Float2", motion.tangentialAcceleration.min_max, data.tangentialAcceleration)
+						self.data:CheckInterval (data.tangentialAcceleration)
+					self.imgui.Spacing ()
+					
+					self:Title (motion.linearDamping)
+						self:Drag ("Float2", motion.linearDamping.min_max, data.linearDamping)
+						self.data:CheckInterval (data.linearDamping)
+					self.imgui.Spacing ()
+					
+					self:Title (motion.linearAcceleration)
+						self:Drag ("Float2", motion.linearAcceleration.min, data.linearAcceleration.min)
+						self:Drag ("Float2", motion.linearAcceleration.max, data.linearAcceleration.max)
+						self.data:CheckDoubleInterval (data.linearAcceleration)
+					self.imgui.Spacing ()
+					
+					self:Title (motion.spin)
+						self:Drag ("Float2", motion.spin.min_max, data.spin.interval)
+						self.data:CheckInterval (data.spin.interval)
+						self:Drag ("Float", motion.spin.variation, data.spin, "variation", 0.1, 0, 1)
+					self.imgui.Spacing ()
+					
+					self:Title (motion.rotation)
 						self.imgui.SameLine ()
-						self:Button (button.remove, true)
-					end
-					self.imgui.TreePop ()
+						_, data.rotation.enable = self.imgui.Checkbox (motion.rotation.enable.title, data.rotation.enable)
+						self:HoveredTooltip (motion.rotation.enable.tip)
+						self:Drag ("Float2", motion.rotation.min_max, data.rotation.interval)
+						self.data:CheckInterval (data.rotation.interval)
+					self.imgui.Spacing ()
+					
+					self:MemberTree (motion.colors, "colors")
+					self:MemberTree (motion.sizes, "sizes")
+				end
+				
+				local drawing = inspector.drawing
+				if (self.imgui.CollapsingHeader (drawing.title)) then
+					self:Title (drawing.position)
+						self:Drag ("Int2", drawing.position.param, data.drawing.position)
+					self.imgui.Spacing ()
+					
+					self:Title (drawing.orientation)
+						self:Drag ("Float", drawing.orientation.param, data.drawing, "orientation")
+					self.imgui.Spacing ()
+					
+					self:Title (drawing.scale)
+						self:Drag ("Float2", drawing.scale.param, data.drawing.scale)
+					self.imgui.Spacing ()
+					
+					self:Title (drawing.origin)
+						self:Drag ("Int2", drawing.origin.param, data.drawing.origin)
+					self.imgui.Spacing ()
+					
+					self:Title (drawing.shearing)
+						self:Drag ("Float2", drawing.shearing.param, data.drawing.shearing)
+					self.imgui.Spacing ()
+					
+					self:Title (drawing.color)
+						self:ColorEdit4 (data.drawing.color)
+					self.imgui.Spacing ()
+					
+					self:Title (drawing.blendmode)
+						self:Combo (drawing.blendmode.normalMode, self.combo.normalMode, data.drawing.blendmode, "normal")
+						self:Combo (drawing.blendmode.alphaMode, self.combo.alphaMode, data.drawing.blendmode, "alpha")
 					self.imgui.Spacing ()
 				end
-			end
-			
-			local drawing = inspector.drawing
-			if (self.imgui.CollapsingHeader (drawing.title)) then
-				self:Title (drawing.position)
-					self:Drag ("Int2", drawing.position.param, data.drawing.position)
-				self.imgui.Spacing ()
-				
-				self:Title (drawing.orientation)
-					self:Drag ("Float", drawing.orientation.param, data.drawing, "orientation")
-				self.imgui.Spacing ()
-				
-				self:Title (drawing.scale)
-					self:Drag ("Float2", drawing.scale.param, data.drawing.scale)
-				self.imgui.Spacing ()
-				
-				self:Title (drawing.origin)
-					self:Drag ("Int2", drawing.origin.param, data.drawing.origin)
-				self.imgui.Spacing ()
-				
-				self:Title (drawing.shearing)
-					self:Drag ("Float2", drawing.shearing.param, data.drawing.shearing)
-				self.imgui.Spacing ()
-				
-				self:Title (drawing.color)
-					self:ColorEdit4 (data.drawing.color)
-				self.imgui.Spacing ()
-				
-				self:Title (drawing.blendmode)
-					self:Combo (drawing.blendmode.normalMode, self.combo.normalMode, data.drawing.blendmode, "normal")
-					self:Combo (drawing.blendmode.alphaMode, self.combo.alphaMode, data.drawing.blendmode, "alpha")
-				self.imgui.Spacing ()
 			end
 		self.imgui.End ()
 	end
@@ -345,37 +359,63 @@ function _module:DrawWidget ()
 			self:Title (hierarchy.operation)
 			self.imgui.Separator ()
 				self:Title (hierarchy.operation.addition)
-					self:Button (hierarchy.operation.addition.new)
+					if (self:Button (hierarchy.operation.addition.new)) then
+						self.data:New ()
+					end
 					self.imgui.SameLine ()
 					self:Button (hierarchy.operation.addition.open)
-					self.imgui.SameLine ()
-					self:Button (hierarchy.operation.addition.clone)
+					if (data) then
+						self.imgui.SameLine ()
+						if (self:Button (hierarchy.operation.addition.clone)) then
+							self.data:Clone ()
+						end
+					end
 				self.imgui.Spacing ()
 				
-				self:Title (hierarchy.operation.animation)
-					self:Button (hierarchy.operation.animation.reset)
-					self.imgui.SameLine ()
-					self:Button (hierarchy.operation.animation.pause)
-				self.imgui.Spacing ()
-				
-				self:Title (hierarchy.operation.order)
-					self:Button (hierarchy.operation.order.up)
-					self.imgui.SameLine ()
-					self:Button (hierarchy.operation.order.down)
-				self.imgui.Spacing ()
-				
-				self:Title (hierarchy.operation.other)
-					self:Button (hierarchy.operation.other.save)
-					self.imgui.SameLine ()
-					self:Button (hierarchy.operation.other.remove)
-				self.imgui.Spacing ()
+				if (data) then
+					self:Title (hierarchy.operation.animation)
+						if (self:Button (hierarchy.operation.animation.reset)) then
+							self.data:RunPsiEvent ("reset")
+						end
+						self.imgui.SameLine ()
+						if (data.isPaused) then
+							if (self:Button (hierarchy.operation.animation.resume)) then
+								data.isPaused = false
+							end
+						else
+							if (self:Button (hierarchy.operation.animation.pause)) then
+								data.isPaused = true
+							end
+						end
+					self.imgui.Spacing ()
+					
+					self:Title (hierarchy.operation.order)
+						if (self:Button (hierarchy.operation.order.up)) then
+							self.data:OrderUp ()
+						end
+						self.imgui.SameLine ()
+						if (self:Button (hierarchy.operation.order.down)) then
+							self.data:OrderDown ()
+						end
+					self.imgui.Spacing ()
+					
+					self:Title (hierarchy.operation.other)
+						self:Button (hierarchy.operation.other.save)
+						self.imgui.SameLine ()
+						if (self:Button (hierarchy.operation.other.remove)) then
+							self.data:Remove ()
+						end
+					self.imgui.Spacing ()
+				end
 			self.imgui.Separator ()
 			
-			self:Title (hierarchy.list)
-				self.imgui.PushItemWidth (327)
-				local listCount = #self.data.nameList
-				self.imgui.ListBox ("", self.data.selectionID, self.data.nameList, listCount, listCount)
-			self.imgui.Spacing ()
+			local listCount = #self.data.nameList
+			if (listCount > 0) then
+				self:Title (hierarchy.list)
+					self.imgui.PushItemWidth (327)
+					_, self.data.selectionID = self.imgui.ListBox ("", self.data.selectionID, self.data.nameList, listCount, listCount)
+				self.imgui.Spacing ()
+			end
 		end
 		
 		local opinions = synthesis.opinions
