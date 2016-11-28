@@ -10,7 +10,7 @@ end
 
 local function _RunEvent (self, name, ...)
 	local event = self.parent.event [name]
-
+	
 	return event.func (event.user, ...)
 end
 

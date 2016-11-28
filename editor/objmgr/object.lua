@@ -15,8 +15,22 @@ local function _CheckDoubleInterval (data)
 	end
 end
 
+local function _CopyTable (tab)
+	local newTab = {}
+	
+	for k, v in pairs (tab) do
+		if (type (v) ~= "table") then
+			newTab [k] = v
+		else
+			newTab [k] = _CopyTable (v)
+		end
+	end
+	
+	return newTab
+end
+
 local function _SetData (data)
-	local newData = _class:RunEvent ("copyTable")
+	local newData = _CopyTable (data)
 	
 	for n=1, #newData.quads do
 		local newQuad
@@ -32,6 +46,8 @@ local function _SetData (data)
 		
 		newData.quads [n] = newQuad
 	end
+	
+	return newData
 end
 
 function _class:Ctor (name, data)
@@ -40,10 +56,10 @@ function _class:Ctor (name, data)
 	self.data = _SetData (data)
 	self.id = 0
 	self.isPaused = false
-	self.texture = {name = "", w = 0, h = 0}
+	self.texture = {name = "...", w = 0, h = 0}
 	
-	self.drawing.position [1] = love.graphics.getWidth () * 0.5
-	self.drawing.position [2] = love.graphics.getHeight () * 0.5
+	self.data.drawing.position [1] = love.graphics.getWidth () * 0.5
+	self.data.drawing.position [2] = love.graphics.getHeight () * 0.5
 end
 
 function _class:Update (dt)
@@ -61,6 +77,12 @@ end
 
 function _class:Clone ()
 	local obj = _class.New (self.name .. "-", self.data)
+	
+	obj:OnEvent ("update")
+	obj:OnEvent ("updateBufferSize")
+	obj:OnEvent ("updateMember", "colors")
+	obj:OnEvent ("updateMember", "sizes")
+	obj:OnEvent ("updateMember", "quads")
 	
 	if (self.texture.image) then
 		obj:SetImage (self.texture.image, self.texture.name)
@@ -86,7 +108,11 @@ function _class:SetImage (image, name)
 	end
 end
 
-function _class:RunEvent (type, ...)
+function _class:GetCount ()
+	return self.ps:getCount ()
+end
+
+function _class:OnEvent (type, ...)
 	if (type == "update") then
 		_CheckInterval (self.data.particleLifetime)
 		_CheckInterval (self.data.speed)
@@ -118,26 +144,27 @@ function _class:RunEvent (type, ...)
 	elseif (type == "updateMember") then
 		local param = {...} --dataName
 		
-		if (param [1] == "colors") then
-			self.ps:setColors (unpack (self.data.colors))
-		elseif (param [1] == "sizes") then
-			self.ps:setSizes (unpack (self.data.sizes))
-		elseif (param [1] == "quads") then
-			self.ps:setQuads (unpack (self.data.quads))
+		if (#self.data [param [1]] > 0) then
+			if (param [1] == "colors") then
+				self.ps:setColors (unpack (self.data.colors))
+			elseif (param [1] == "sizes") then
+				self.ps:setSizes (unpack (self.data.sizes))
+			elseif (param [1] == "quads") then
+				self.ps:setQuads (unpack (self.data.quads))
+			end
 		end
 	elseif (type == "removeMember") then
 		local param = {...} --dataName, id
 		table.remove (self.data [param [1]], param [2])
-		self:SetEvent (param [1])
 	elseif (type == "addMember") then
 		local param = {...} --dataName
 		local listData = self.data [param [1]]
 		
-		if (type == "colors") then
+		if (param [1] == "colors") then
 			listData [#listData + 1] = {255, 255, 255, 255}
-		elseif (type == "sizes") then
+		elseif (param [1] == "sizes") then
 			listData [#listData + 1] = 1
-		elseif (type == "quads") then
+		elseif (param [1] == "quads") then
 			if (self.texture) then
 				listData [#listData + 1] = love.graphics.newQuad (0, 0, self.texture.width, self.texture.height, self.texture.width, self.texture.height)
 			else
@@ -177,8 +204,19 @@ function _class:RunEvent (type, ...)
 		self.isPaused = true
 	elseif (type == "resume") then
 		self.isPaused = false
+	elseif (type == "isPaused") then
+		return self.isPaused
 	elseif (type == "hasImage") then
-		return not self.texture.image
+		return self.texture.image ~= nil
+	elseif (type == "getData") then
+		return self.data
+	elseif (type == "getTextureName") then
+		return self.texture.name
+	elseif (type == "getName") then
+		return self.name
+	elseif (type == "setName") then
+		self.name = ...
+		_class:RunEvent ("changeNameMember", self.id, self.name)
 	end
 end
 

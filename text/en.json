@@ -317,7 +317,14 @@
 						"title": "Remove",
 						"tip": "Remove the selected Particle Object in List."
 					}
-                }
+                },
+				"rename": {
+					"title": "Rename",
+					"input": {
+						"title": "current name",
+						"tip": "Define the selected Particle Object's name."
+					}
+				}
             },
             "list": {
                 "title": "List",
