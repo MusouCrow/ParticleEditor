@@ -394,6 +394,10 @@ function _class:PushID ()
 	self.imgui.PushID (self.widgetID)
 end
 
+function _class:PopID ()
+	self.imgui.PopID ()
+end
+
 function _class:Title (text)
 	if (type (text) ~= "table") then
 		self.imgui.Text (text)
@@ -429,6 +433,8 @@ function _class:Drag (name, text, data, key, ...)
 		end
 	end
 	
+	self:PopID ()
+	
 	if (isTab) then
 		if (text.tip) then
 			self:HoveredTooltip (text.tip)
@@ -442,6 +448,7 @@ function _class:Combo (text, beadroll, data, key)
 	self:PushID ()
 	local _, value = self.imgui.Combo (text.title, beadroll [data [key]], text.itemsString)
 	data [key] = text.items [value]
+	self:PopID ()
 	
 	if (text.tip) then
 		self:HoveredTooltip (text.tip)
@@ -469,6 +476,8 @@ function _class:ColorEdit4 (color)
 	for n=2, #ret do
 		color [n - 1] = ret [n] * 255
 	end
+	
+	self:PopID ()
 	
 	return ret [1]
 end
@@ -517,11 +526,13 @@ function _class:MemberTree (text, data, type)
 			elseif (type == "sizes") then
 				self:PushID ()
 				ret, listData [n] = self.imgui.DragFloat ("", listData [n], 0.1, 0, _maxCount)
+				self:PopID ()
 			elseif (type == "quads") then
 				self:PushID ()
 				local x, y, w, h = listData [n]:getViewport ()
 				ret, x, y, w, h = self.imgui.DragInt4 ("", x, y, w, h, 1, 0, _maxCount)
 				self:HoveredTooltip (self.text.inspector.outward.quads.member.tip)
+				self:PopID ()
 				
 				if (ret) then
 					_RunObjectEvent ("setQuad", listData [n], x, y, w, h)

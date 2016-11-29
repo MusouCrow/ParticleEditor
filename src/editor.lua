@@ -9,7 +9,7 @@ function _class:Init ()
 	elseif (os == "Windows") then
 		package.cpath = package.cpath .. ";./lib/win32/?.dll"
 	elseif (os == "Linux") then
-		package.cpath = package.cpath .. ";./lib/ubt/?.so"
+		package.cpath = package.cpath .. ";./lib/ubt64/?.so"
 	end
 	
 	self.cjson = require ("cjson")

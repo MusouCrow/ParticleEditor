@@ -12,7 +12,7 @@
 ### Features
 
 * It has all function of Particle System.
-* It is cross-platform. (Windows, Mac OS X, Ubuntu)
+* It is cross-platform. (Windows (32 bit), Mac OS X, Ubuntu (64 bit))
 * It uses to [Imgui](https://github.com/slages/love-imgui.git) as the UI kit.
 * It can make/open/save a Particle File. (*.json)
 * It can edit more than one Particle Object.
@@ -27,5 +27,5 @@
 ### How to use?
 * In ParticleEditor, you can make some Particle File to give your project to use.
 * The Particle File's format is JSON, so you need to use the library of CJSON. (Already be included in the **lib** folder)
-* You can use the specially function in the **load.lua** to load Particle File and then to create Particle System object.
+* You can use the specially function in the **creation.lua** to load Particle File and then to create Particle System object.
 * The Particle File doesn't have Texture data and Drawing data, so you need to prepare yourself.
