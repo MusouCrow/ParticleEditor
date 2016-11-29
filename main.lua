@@ -1,4 +1,4 @@
-local _editor = require ("editor")
+local _editor = require ("src.editor")
 
 function love.load ()
 	_editor:Init ()

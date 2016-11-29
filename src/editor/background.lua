@@ -1,4 +1,4 @@
-local _class = require ("class") ("background", "editor", "sington")
+local _class = require ("src.class") ("background", "src.editor", "src.sington")
 
 function _class:Init ()
 	--image

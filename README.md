@@ -5,7 +5,7 @@
 
 ### About Particle Editor
 
-* This is a editor of particle for LÖVE. It be entrusted on the [Coding.net] (https://git.coding.net/musoucrow/ParticleEditor.git).
+* This is a editor of particle for [LÖVE](https://love2d.org). It be entrusted on the [Coding.net] (https://git.coding.net/musoucrow/ParticleEditor.git).
 * It is licensed under the MIT License, see LICENSE for more information.
 * The Particle Editor needs to run on LÖVE.
 
@@ -13,7 +13,7 @@
 
 * It has all function of Particle System.
 * It is cross-platform. (Windows, Mac OS X, Ubuntu)
-* It uses to Imgui as the UI kit.
+* It uses to [Imgui](https://github.com/slages/love-imgui.git) as the UI kit.
 * It can make/open/save a Particle File. (*.json)
 * It can edit more than one Particle Object.
 

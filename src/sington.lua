@@ -1,4 +1,4 @@
-local _class = require ("class") ("sington")
+local _class = require ("src.class") ("sington")
 
 function _class:Ctor ()
 	self.event = {}

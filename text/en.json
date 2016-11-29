@@ -14,7 +14,10 @@
 		}
 	},
 	"messageBox": {
-		"image": "Please drag a image file into this app window to use it. (Press Escape key to exit.)"
+		"closeTips": "(Click to exit.)",
+		"image": "Please drag a image file into this app window to use it.",
+		"save": "The Particle Object has saved in %s.",
+		"open": "Please drag a Particle Object file (*.json) into this app window to use it."
 	},
     "inspector": {
         "title": "Inspector",

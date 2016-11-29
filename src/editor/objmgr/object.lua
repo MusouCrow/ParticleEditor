@@ -1,4 +1,4 @@
-local _class = require ("class") ("object", "editor.objmgr")
+local _class = require ("src.class") ("object", "src.editor.objmgr")
 local _canvas = love.graphics.newCanvas ()
 
 local function _CheckInterval (data)
@@ -50,6 +50,50 @@ local function _SetData (data)
 	return newData
 end
 
+local function _UpdateMany (self)
+	_CheckInterval (self.data.particleLifetime)
+	_CheckInterval (self.data.speed)
+	_CheckInterval (self.data.radialAcceleration)
+	_CheckInterval (self.data.tangentialAcceleration)
+	_CheckInterval (self.data.linearDamping)
+	_CheckInterval (self.data.spin.interval)
+	_CheckInterval (self.data.rotation.interval)
+	_CheckDoubleInterval (self.data.linearAcceleration)
+	
+	self.ps:setEmissionRate (self.data.emissionRate)
+	self.ps:setAreaSpread (self.data.areaSpread.distribution, unpack (self.data.areaSpread.distance))
+	self.ps:setInsertMode (self.data.insertMode)
+	self.ps:setOffset (unpack (self.data.offset))
+	self.ps:setDirection (self.data.direction)
+	self.ps:setSpread (self.data.spread)
+	self.ps:setSpeed (unpack (self.data.speed))
+	self.ps:setParticleLifetime (unpack (self.data.particleLifetime))
+	self.ps:setRadialAcceleration (unpack (self.data.radialAcceleration))
+	self.ps:setTangentialAcceleration (unpack (self.data.tangentialAcceleration))
+	self.ps:setLinearDamping (unpack (self.data.linearDamping))
+	self.ps:setLinearAcceleration (self.data.linearAcceleration.min [1], self.data.linearAcceleration.min [2], self.data.linearAcceleration.max [1], self.data.linearAcceleration.max [2])
+	self.ps:setSpin (unpack (self.data.spin.interval))
+	self.ps:setSpinVariation (self.data.spin.variation)
+	self.ps:setRotation (unpack (self.data.rotation.interval))
+	self.ps:setRelativeRotation (self.data.rotation.enable)
+end
+
+local function _UpdateBufferSize (self)
+	self.ps:setBufferSize (self.data.bufferSize)
+end
+
+local function _UpdateMember (self, type)
+	if (#self.data [type] > 0) then
+		if (type == "colors") then
+			self.ps:setColors (unpack (self.data.colors))
+		elseif (type == "sizes") then
+			self.ps:setSizes (unpack (self.data.sizes))
+		elseif (type == "quads") then
+			self.ps:setQuads (unpack (self.data.quads))
+		end
+	end
+end
+
 function _class:Ctor (name, data)
 	self.ps = love.graphics.newParticleSystem (_canvas, 1)
 	self.name = name
@@ -60,6 +104,12 @@ function _class:Ctor (name, data)
 	
 	self.data.drawing.position [1] = love.graphics.getWidth () * 0.5
 	self.data.drawing.position [2] = love.graphics.getHeight () * 0.5
+	
+	_UpdateMany (self)
+	_UpdateBufferSize (self)
+	_UpdateMember (self, "colors")
+	_UpdateMember (self, "sizes")
+	_UpdateMember (self, "quads")
 end
 
 function _class:Update (dt)
@@ -78,17 +128,24 @@ end
 function _class:Clone ()
 	local obj = _class.New (self.name .. "-", self.data)
 	
-	obj:OnEvent ("update")
-	obj:OnEvent ("updateBufferSize")
-	obj:OnEvent ("updateMember", "colors")
-	obj:OnEvent ("updateMember", "sizes")
-	obj:OnEvent ("updateMember", "quads")
-	
 	if (self.texture.image) then
 		obj:SetImage (self.texture.image, self.texture.name)
 	end
 	
 	return obj
+end
+
+function _class:ReturnToData ()
+	local newData = _CopyTable (self.data)
+	
+	for n=1, #newData.quads do
+		local x, y, w, h = newData.quads [n]:getViewport ()
+		local sw, sh = newData.quads [n]:getTextureDimensions ()
+		
+		newData.quads [n] = {x, y, w, h, sw ,sh}
+	end
+	
+	return newData
 end
 
 function _class:SetImage (image, name)
@@ -113,46 +170,12 @@ function _class:GetCount ()
 end
 
 function _class:OnEvent (type, ...)
-	if (type == "update") then
-		_CheckInterval (self.data.particleLifetime)
-		_CheckInterval (self.data.speed)
-		_CheckInterval (self.data.radialAcceleration)
-		_CheckInterval (self.data.tangentialAcceleration)
-		_CheckInterval (self.data.linearDamping)
-		_CheckInterval (self.data.spin.interval)
-		_CheckInterval (self.data.rotation.interval)
-		_CheckDoubleInterval (self.data.linearAcceleration)
-		
-		self.ps:setEmissionRate (self.data.emissionRate)
-		self.ps:setAreaSpread (self.data.areaSpread.distribution, unpack (self.data.areaSpread.distance))
-		self.ps:setInsertMode (self.data.insertMode)
-		self.ps:setOffset (unpack (self.data.offset))
-		self.ps:setDirection (self.data.direction)
-		self.ps:setSpread (self.data.spread)
-		self.ps:setSpeed (unpack (self.data.speed))
-		self.ps:setParticleLifetime (unpack (self.data.particleLifetime))
-		self.ps:setRadialAcceleration (unpack (self.data.radialAcceleration))
-		self.ps:setTangentialAcceleration (unpack (self.data.tangentialAcceleration))
-		self.ps:setLinearDamping (unpack (self.data.linearDamping))
-		self.ps:setLinearAcceleration (self.data.linearAcceleration.min [1], self.data.linearAcceleration.min [2], self.data.linearAcceleration.max [1], self.data.linearAcceleration.max [2])
-		self.ps:setSpin (unpack (self.data.spin.interval))
-		self.ps:setSpinVariation (self.data.spin.variation)
-		self.ps:setRotation (unpack (self.data.rotation.interval))
-		self.ps:setRelativeRotation (self.data.rotation.enable)
+	if (type == "updateMany") then
+		_UpdateMany (self)
 	elseif (type == "updateBufferSize") then
-		self.ps:setBufferSize (self.data.bufferSize)
+		_UpdateBufferSize (self)
 	elseif (type == "updateMember") then
-		local param = {...} --dataName
-		
-		if (#self.data [param [1]] > 0) then
-			if (param [1] == "colors") then
-				self.ps:setColors (unpack (self.data.colors))
-			elseif (param [1] == "sizes") then
-				self.ps:setSizes (unpack (self.data.sizes))
-			elseif (param [1] == "quads") then
-				self.ps:setQuads (unpack (self.data.quads))
-			end
-		end
+		_UpdateMember (self, ...)
 	elseif (type == "removeMember") then
 		local param = {...} --dataName, id
 		table.remove (self.data [param [1]], param [2])

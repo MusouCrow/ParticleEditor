@@ -1,4 +1,4 @@
-local _class = require ("class") ("interface", "editor", "sington")
+local _class = require ("src.class") ("interface", "src.editor", "src.sington")
 local _maxCount = 2147483647
 
 local function _RunObjectEvent (...)
@@ -48,11 +48,11 @@ local function _CutString (str, key)
 	return list
 end
 
-function _class:Init (text)
+function _class:Init (imgui, text)
 	self.text = text
 	_HandleText (self.text)
 	
-	self.imgui = require ("imgui")
+	self.imgui = imgui
 	self.widgetID = 0
 	self.combo = {
 		areaSpread = {uniform = 1, normal = 2, ellipse = 3, none = 4},
@@ -82,7 +82,7 @@ function _class:Draw ()
 		love.graphics.setColor (0, 0, 0, 127)
 		love.graphics.rectangle ("fill", 0, 0, w, h)
 		love.graphics.setColor (255, 255, 255, 255)
-		love.graphics.print (self.messageBox.text, w * 0.5 - self.messageBox.width, h * 0.5 - self.messageBox.height)
+		love.graphics.print (self.messageBox.text, math.ceil (w * 0.5 - self.messageBox.width), math.ceil (h * 0.5 - self.messageBox.height))
 	else
 		self:DrawWidget ()
 	end
@@ -222,7 +222,7 @@ function _class:DrawWidget ()
 					self.imgui.Spacing ()
 				end
 			end
-		_RunObjectEvent ("update")
+		_RunObjectEvent ("updateMany")
 		self.imgui.End ()
 	end
 	
@@ -235,10 +235,12 @@ function _class:DrawWidget ()
 			self.imgui.Separator ()
 				self:Title (hierarchy.operation.addition)
 					if (self:Button (hierarchy.operation.addition.new)) then
-						_class:RunEvent ("objmgr_createNewObject")
+						_class:RunEvent ("objmgr_createObject")
 					end
 					self.imgui.SameLine ()
-					self:Button (hierarchy.operation.addition.open)
+					if (self:Button (hierarchy.operation.addition.open)) then
+						self:MessageBox ("open")
+					end
 					if (data) then
 						self.imgui.SameLine ()
 						if (self:Button (hierarchy.operation.addition.clone)) then
@@ -275,20 +277,27 @@ function _class:DrawWidget ()
 						end
 					self.imgui.Spacing ()
 					
+					local hasRemoved = false
 					self:Title (hierarchy.operation.other)
-						self:Button (hierarchy.operation.other.save)
+						if (self:Button (hierarchy.operation.other.save)) then
+							local path = _class:RunEvent ("objmgr_saveObject")
+							self:MessageBox ("save", path)
+						end
 						self.imgui.SameLine ()
 						if (self:Button (hierarchy.operation.other.remove)) then
 							_class:RunEvent ("objmgr_removeObject")
+							hasRemoved = true
 						end
 					self.imgui.Spacing ()
 					
 					self:Title (hierarchy.operation.rename)
-						local pass
-						local name = _RunObjectEvent ("getName")
-						pass, name = self.imgui.InputText (hierarchy.operation.rename.input.title, name, 10)
-						if (pass) then
-							_RunObjectEvent ("setName", name)
+						if (not hasRemoved) then
+							local pass
+							local name = _RunObjectEvent ("getName")
+							pass, name = self.imgui.InputText (hierarchy.operation.rename.input.title, name, #name + 1)
+							if (pass) then
+								_RunObjectEvent ("setName", name)
+							end
 						end
 					self.imgui.Spacing ()
 				end
@@ -357,15 +366,21 @@ function _class:DrawWidget ()
 	self.widgetID = 0
 end
 
-function _class:MessageBox (type)
+function _class:MessageBox (type, ...)
 	self.messageBox.type = type
 	self.messageBox.open = true
 	
 	if (type == "texture" or type == "background") then
 		self.messageBox.text = self.text.messageBox.image
-		self.messageBox.width = self.messageBox.font:getWidth (self.messageBox.text) * 0.5
-		self.messageBox.height = self.messageBox.font:getHeight (self.messageBox.text) * 0.5
+	elseif (type == "save") then
+		self.messageBox.text = string.format (self.text.messageBox.save, ...)
+	elseif (type == "open") then
+		self.messageBox.text = self.text.messageBox.open
 	end
+	
+	self.messageBox.text = self.messageBox.text .. self.text.messageBox.closeTips
+	self.messageBox.width = self.messageBox.font:getWidth (self.messageBox.text) * 0.5
+	self.messageBox.height = self.messageBox.font:getHeight (self.messageBox.text) * 0.5
 end
 
 function _class:HoveredTooltip (text)
@@ -540,26 +555,27 @@ function _class:MemberTree (text, data, type)
 end
 
 function _class:Filedropped (file)
-	if (self.messageBox.open and (self.messageBox.type == "texture" or self.messageBox.type == "background") and file) then
-		local contents = file:read ()
+	if (self.messageBox.open and file) then
+		local content = file:read ()
 		local fileName = file:getFilename ()
-		local fileData = love.filesystem.newFileData (contents, fileName)
-		local imageData = love.image.newImageData (fileData)
-		local image = love.graphics.newImage (imageData)
 		local strList = _CutString (fileName, "/")
 		local name = strList [#strList]
 		
-		_class:RunEvent ("setImage", self.messageBox.type, image, name)
-		self.messageBox.open = false
+		if (self.messageBox.type == "texture" or self.messageBox.type == "background") then
+			local fileData = love.filesystem.newFileData (content, fileName)
+			local imageData = love.image.newImageData (fileData)
+			local image = love.graphics.newImage (imageData)
+			
+			_class:RunEvent ("setImage", self.messageBox.type, image, name)
+			self.messageBox.open = false
+		elseif (self.messageBox.type == "open") then
+			local data = _class:RunEvent ("makeJson", content)
+			local name = _CutString (name, ".json") [1]
+			
+			_class:RunEvent ("objmgr_createObject", data, name)
+			self.messageBox.open = false
+		end
 	end
-end
-
-function _class:KeyPressed (key)
-	if (self.messageBox.open and key == "escape") then
-		self.messageBox.open = false
-	end
-	
-	self.imgui.KeyPressed (key)
 end
 
 function _class:Quit ()
@@ -568,6 +584,10 @@ end
 
 function _class:TextInput (text)
 	self.imgui.TextInput (text)
+end
+
+function _class:KeyPressed (key)	
+	self.imgui.KeyPressed (key)
 end
 
 function _class:KeyReleased (key)
@@ -579,6 +599,10 @@ function _class:MouseMoved (x, y)
 end
 
 function _class:MousePressed (button)
+	if (self.messageBox.open and button == 1) then
+		self.messageBox.open = false
+	end
+	
 	self.imgui.MousePressed (button)
 end
 

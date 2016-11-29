@@ -1,4 +1,4 @@
-local _class = require ("class") ("objmgr", "editor", "sington")
+local _class = require ("src.class") ("objmgr", "src.editor", "src.sington")
 
 local function _ClearTable (tab)
 	for k in pairs (tab) do
@@ -9,12 +9,11 @@ end
 function _class:Init (templateData)
 	--self.selectedObject
 	self.templateData = templateData
-	self.objectClass = require ("editor.objmgr.object")
+	self.objectClass = require ("src.editor.objmgr.object")
 	self.objectList = {}
 	self.nameList = {}
 	self.createCount = 0
 
-	--RefreshList
 	self:AddEvent ("changeNameMember", self, self.ChangeNameMember)
 end
 
@@ -54,11 +53,15 @@ function _class:RefreshList ()
 	end
 end
 
-function _class:CreateNewObject (data)
+function _class:CreateObject (data, name)
 	data = data or self.templateData
-	self.createCount = self.createCount + 1
 	
-	local obj = self.objectClass.New (tostring (self.createCount), data)
+	if (name == nil) then
+		self.createCount = self.createCount + 1
+		name = tostring (self.createCount)
+	end
+	
+	local obj = self.objectClass.New (name, data)
 	self.objectList [#self.objectList + 1] = obj
 	self.selectedObject = obj
 	
@@ -112,6 +115,14 @@ function _class:OrderObject (direction, object)
 		
 		self:RefreshList ()
 	end
+end
+
+function _class:SaveObject (object)
+	object = object or self.selectedObject
+	local path = "output/" .. object.name .. ".json"
+	_class:RunEvent ("saveJson", path, object:ReturnToData ())
+	
+	return path
 end
 
 function _class:SetImage (image, name, object)
