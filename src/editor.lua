@@ -97,8 +97,8 @@ function _class:MouseMoved (x, y)
 	self.interface:MouseMoved (x, y)
 end
 
-function _class:MousePressed (button)
-	self.interface:MousePressed (button)
+function _class:MousePressed (x, y, button)
+	self.interface:MousePressed (x, y, button)
 end
 
 function _class:MouseReleased (button)

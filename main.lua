@@ -33,7 +33,7 @@ function love.mousemoved (x, y)
 end
 
 function love.mousepressed (x, y, button)
-    _editor:MousePressed (button)
+    _editor:MousePressed (x, y, button)
 end
 
 function love.mousereleased (x, y, button)

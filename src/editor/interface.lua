@@ -69,6 +69,8 @@ function _class:Init (imgui, text)
 		height = 0,
 		font = love.graphics.getFont ()
 	}
+	
+	self.keepScale = false
 end
 
 function _class:Update ()
@@ -93,6 +95,7 @@ function _class:DrawWidget ()
 	local synthesis = self.text.synthesis
 	local button = self.text.button
 	local data = _RunObjectEvent ("getData")
+	local setting = _RunObjectEvent ("getSetting")
 	local hasTexture = _RunObjectEvent ("hasImage")
 	
 	if (data) then
@@ -185,8 +188,7 @@ function _class:DrawWidget ()
 					
 					self:Title (motion.rotation)
 						self.imgui.SameLine ()
-						_, data.rotation.enable = self.imgui.Checkbox (motion.rotation.enable.title, data.rotation.enable)
-						self:HoveredTooltip (motion.rotation.enable.tip)
+						self:CheckBox (motion.rotation.enable, data.rotation, "enable")
 						self:Drag ("Float2", motion.rotation.min_max, data.rotation.interval)
 					self.imgui.Spacing ()
 					
@@ -205,6 +207,8 @@ function _class:DrawWidget ()
 					self.imgui.Spacing ()
 					
 					self:Title (drawing.scale)
+						self.imgui.SameLine ()
+						self:CheckBox (drawing.scale.keep, setting, "keepScale")
 						self:Drag ("Float2", drawing.scale.param, data.drawing.scale)
 					self.imgui.Spacing ()
 					
@@ -262,11 +266,11 @@ function _class:DrawWidget ()
 						
 						if (_RunObjectEvent ("isPaused")) then
 							if (self:Button (hierarchy.operation.animation.resume)) then
-								_RunObjectEvent ("resume")
+								_RunObjectEvent ("pause_resume")
 							end
 						else
 							if (self:Button (hierarchy.operation.animation.pause)) then
-								_RunObjectEvent ("pause")
+								_RunObjectEvent ("pause_resume")
 							end
 						end
 					self.imgui.Spacing ()
@@ -507,6 +511,26 @@ function _class:Button (text, isSmall)
 	return false
 end
 
+function _class:CheckBox (text, data, key)
+	self:PushID ()
+	local title = ""
+	local isTab = type (text) == "table"
+	
+	if (isTab) then
+		title = text.title
+	else
+		title = text
+	end
+
+	_, data [key] = self.imgui.Checkbox (title, data [key])
+	
+	if (isTab) then
+		self:HoveredTooltip (text.tip)
+	end
+
+	self:PopID ()
+end
+
 function _class:MemberTree (text, data, type)
 	if (self:Tree (text)) then
 		local activity = false
@@ -601,7 +625,17 @@ function _class:TextInput (text)
 	self.imgui.TextInput (text)
 end
 
-function _class:KeyPressed (key)	
+function _class:KeyPressed (key)
+	if (key == "space") then
+		_RunObjectEvent ("pause_resume")
+	elseif (key == "return") then
+		_RunObjectEvent ("reset")
+	elseif (key == "up") then
+		_class:RunEvent ("objmgr_orderObject", -1)
+	elseif (key == "down") then
+		_class:RunEvent ("objmgr_orderObject", 1)
+	end
+	
 	self.imgui.KeyPressed (key)
 end
 
@@ -613,9 +647,13 @@ function _class:MouseMoved (x, y)
 	self.imgui.MouseMoved (x, y)
 end
 
-function _class:MousePressed (button)
+function _class:MousePressed (x, y, button)
 	if (self.messageBox.open and button == 1) then
 		self.messageBox.open = false
+	else
+		if (button == 2) then
+			_RunObjectEvent ("setPosition", x, y)
+		end
 	end
 	
 	self.imgui.MousePressed (button)

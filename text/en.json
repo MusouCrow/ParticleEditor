@@ -226,7 +226,11 @@
             "scale": {
                 "title": "Scale",
                 "tip": "Scale factor.",
-                "param": "x, y"
+                "param": "x, y",
+				"keep": {
+					"title": "keep",
+					"tip": "Keep the scale factor (x and y) together."
+				}
             },
             "origin": {
                 "title": "Origin",

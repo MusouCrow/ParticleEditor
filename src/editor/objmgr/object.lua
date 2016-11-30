@@ -60,6 +60,10 @@ local function _UpdateMany (self)
 	_CheckInterval (self.data.rotation.interval)
 	_CheckDoubleInterval (self.data.linearAcceleration)
 	
+	if (self.setting.keepScale) then
+		self.data.drawing.scale [1] = self.data.drawing.scale [2]
+	end
+	
 	self.ps:setEmitterLifetime (self.data.emitterLifetime)
 	self.ps:setEmissionRate (self.data.emissionRate)
 	self.ps:setAreaSpread (self.data.areaSpread.distribution, unpack (self.data.areaSpread.distance))
@@ -77,6 +81,7 @@ local function _UpdateMany (self)
 	self.ps:setSpinVariation (self.data.spin.variation)
 	self.ps:setRotation (unpack (self.data.rotation.interval))
 	self.ps:setRelativeRotation (self.data.rotation.enable)
+	self.ps:setPosition (unpack (self.data.drawing.position))
 end
 
 local function _UpdateBufferSize (self)
@@ -99,6 +104,10 @@ function _class:Ctor (name, data)
 	self.ps = love.graphics.newParticleSystem (_canvas, 1)
 	self.name = name
 	self.data = _SetData (data)
+	self.setting = {
+		keepScale = false
+	}
+	
 	self.id = 0
 	self.isPaused = false
 	self.texture = {name = "...", w = 0, h = 0}
@@ -115,10 +124,6 @@ end
 
 function _class:Update (dt)
 	if (not self.isPaused) then
-		if (not self.ps:isActive ()) then
-			self.ps:start ()
-		end
-		
 		self.ps:update (dt)
 	end
 end
@@ -127,7 +132,7 @@ function _class:Draw ()
 	local drawing = self.data.drawing
 	love.graphics.setBlendMode (drawing.blendmode.normal, drawing.blendmode.alpha)
 	love.graphics.setColor (drawing.color)
-	love.graphics.draw (self.ps, drawing.position [1], drawing.position [2], drawing.orientation, drawing.scale [1], drawing.scale [2], drawing.origin [1], drawing.origin [2], drawing.shearing [1], drawing.shearing [2])
+	love.graphics.draw (self.ps, 0, 0, drawing.orientation, drawing.scale [1], drawing.scale [2], drawing.origin [1], drawing.origin [2], drawing.shearing [1], drawing.shearing [2])
 end
 
 function _class:Clone ()
@@ -227,17 +232,21 @@ function _class:OnEvent (type, ...)
 		
 		quad:setViewport (x, y, w, h)
 	elseif (type == "reset") then
-		self.ps:reset ()
-	elseif (type == "pause") then
-		self.isPaused = true
-	elseif (type == "resume") then
-		self.isPaused = false
+		if (not self.ps:isActive ()) then
+			self.ps:start ()
+		else
+			self.ps:reset ()
+		end
+	elseif (type == "pause_resume") then
+		self.isPaused = not self.isPaused
 	elseif (type == "isPaused") then
 		return self.isPaused
 	elseif (type == "hasImage") then
 		return self.texture.image ~= nil
 	elseif (type == "getData") then
 		return self.data
+	elseif (type == "getSetting") then
+		return self.setting
 	elseif (type == "getTextureName") then
 		return self.texture.name
 	elseif (type == "getName") then
@@ -245,6 +254,11 @@ function _class:OnEvent (type, ...)
 	elseif (type == "setName") then
 		self.name = ...
 		_class:RunEvent ("changeNameMember", self.id, self.name)
+	elseif (type == "setPosition") then
+		local param = {...} --x, y
+		
+		self.data.drawing.position [1] = param [1]
+		self.data.drawing.position [2] = param [2]
 	end
 end
 
