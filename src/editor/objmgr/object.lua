@@ -60,6 +60,7 @@ local function _UpdateMany (self)
 	_CheckInterval (self.data.rotation.interval)
 	_CheckDoubleInterval (self.data.linearAcceleration)
 	
+	self.ps:setEmitterLifetime (self.data.emitterLifetime)
 	self.ps:setEmissionRate (self.data.emissionRate)
 	self.ps:setAreaSpread (self.data.areaSpread.distribution, unpack (self.data.areaSpread.distance))
 	self.ps:setInsertMode (self.data.insertMode)
@@ -114,6 +115,10 @@ end
 
 function _class:Update (dt)
 	if (not self.isPaused) then
+		if (not self.ps:isActive ()) then
+			self.ps:start ()
+		end
+		
 		self.ps:update (dt)
 	end
 end

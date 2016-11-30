@@ -43,12 +43,20 @@
                     "tip": "The amount of particles per second."
                 }
             },
+            "emissionLifetime": {
+                "title": "Emitter Lifetime",
+                "tip": "Sets how long the particle system should emit particles (if -1 then it emits particles forever).",
+                "life": {
+                    "title": "life",
+                    "tip": "The lifetime of the emitter (in seconds)."
+                }
+            },
             "particleLifetime": {
                 "title": "Particle Lifetime",
                 "tip": "Sets the lifetime of the particles.",
                 "min_max": {
                     "title": "min, max",
-                    "tip": "The minimum(maximum) life of the particles (in seconds)."
+                    "tip": "The minimum (maximum) life of the particles (in seconds)."
                 }
             }
         },
@@ -69,7 +77,7 @@
                 },
                 "dx_dy": {
                     "title": "dx, dy",
-                    "tip": "The maximum spawn distance from the emitter along the x(y)-axis for uniform distribution, or the standard deviation along the x(y)-axis for normal distribution."
+                    "tip": "The maximum spawn distance from the emitter along the x (y)-axis for uniform distribution, or the standard deviation along the x (y)-axis for normal distribution."
                 }
             },
             "insertMode": {
@@ -90,7 +98,7 @@
                 "tip": "Set the offset position which the particle sprite is rotated around. If this function is not used, the particles rotate around their center.",
                 "x_y": {
                     "title": "x, y",
-                    "tip": "The x(y) coordinate of the rotation offset."
+                    "tip": "The x (y) coordinate of the rotation offset."
                 }
             },
             "direction": {
@@ -127,7 +135,7 @@
                 "tip": "Sets the speed of the particles.",
                 "min_max": {
                     "title": "min, max",
-                    "tip": "The minimum(maximum) linear speed of the particles."
+                    "tip": "The minimum (maximum) linear speed of the particles."
                 }
             },
             "radialAcceleration": {
@@ -135,7 +143,7 @@
                 "tip": "Set the radial acceleration (away from the emitter).",
                 "min_max": {
                     "title": "min, max",
-                    "tip": "The minimum(maximum) acceleration."
+                    "tip": "The minimum (maximum) acceleration."
                 }
             },
             "tangentialAcceleration": {
@@ -143,7 +151,7 @@
                 "tip": "Sets the tangential acceleration (acceleration perpendicular to the particle's direction).",
                 "min_max": {
                     "title": "min, max",
-                    "tip": "The minimum(maximum) acceleration."
+                    "tip": "The minimum (maximum) acceleration."
                 }
             },
             "linearDamping": {
@@ -151,7 +159,7 @@
                 "tip": "Sets the amount of linear damping (constant deceleration) for particles.",
                 "min_max": {
                     "title": "min, max",
-                    "tip": "The minimum(maximum) amount of linear damping applied to particles."
+                    "tip": "The minimum (maximum) amount of linear damping applied to particles."
                 }
             },
             "linearAcceleration": {
@@ -159,11 +167,11 @@
                 "tip": "Sets the linear acceleration (acceleration along the x and y axes) for particles. Every particle created will accelerate along the x and y axes between xmin,ymin and xmax,ymax.",
                 "min": {
                     "title": "xmin, ymin",
-                    "tip": "The minimum acceleration along the x(y) axis."
+                    "tip": "The minimum acceleration along the x (y) axis."
                 },
                 "max": {
                     "title": "xmax, ymax",
-                    "tip": "The maximum acceleration along the x(y) axis."
+                    "tip": "The maximum acceleration along the x (y) axis."
                 }
             },
             "spin": {
@@ -171,7 +179,7 @@
                 "tip": "Sets the spin of the sprite.",
                 "min_max": {
                     "title": "min, max",
-                    "tip": "The minimum(maximum) spin (radians per second)."
+                    "tip": "The minimum (maximum) spin (radians per second)."
                 },
                 "variation": {
                     "title": "variation",
@@ -187,7 +195,7 @@
                 },
                 "min_max": {
                     "title": "min, max",
-                    "tip": "The minimum(maximum) initial angle (radians)."
+                    "tip": "The minimum (maximum) initial angle (radians)."
                 }
             },
             "colors": {

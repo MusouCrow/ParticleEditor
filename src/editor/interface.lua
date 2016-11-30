@@ -119,6 +119,10 @@ function _class:DrawWidget ()
 					self:Drag ("Float", necessity.emissionRate.rate, data, "emissionRate", 0.1, 0, _maxCount)
 				self.imgui.Spacing ()
 				
+				self:Title (necessity.emissionLifetime)
+					self:Drag ("Float", necessity.emissionLifetime.life, data, "emitterLifetime", 0.1, -1, _maxCount)
+				self.imgui.Spacing ()
+				
 				self:Title (necessity.particleLifetime)
 					self:Drag ("Float2", necessity.particleLifetime.min_max, data.particleLifetime, nil, 0.1, 0, _maxCount)
 				self.imgui.Spacing ()

@@ -1,11 +1,12 @@
 -- The function is used to create Particle System object for Particle File Data, You can use it in your project.
 -- And you need to provide the parameter of texture and lifeTime.
 
-return function (data, texture, lifeTimeMin, lifeTimeMax)
+return function (data, texture, )
 	local ps = love.graphics.newParticleSystem (texture, data.bufferSize)
 	
-	ps:setParticleLifetime (lifeTimeMin, lifeTimeMax)
+	ps:setEmitterLifetime (data.emitterLifetime)
 	ps:setEmissionRate (data.emissionRate)
+	ps:setParticleLifetime (unpack (data.particleLifetime))
 	ps:setAreaSpread (data.areaSpread.distribution, unpack (data.areaSpread.distance))
 	ps:setInsertMode (data.insertMode)
 	ps:setOffset (unpack (data.offset))

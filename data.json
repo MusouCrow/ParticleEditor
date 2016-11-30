@@ -1,6 +1,7 @@
 {
     "bufferSize": 1,
     "emissionRate": 0,
+	"emitterLifetime": -1,
 	"particleLifetime": [0, 0],
     "areaSpread": {
         "distribution": "none",
