@@ -64,7 +64,6 @@ local function _UpdateMany (self)
 		self.data.drawing.scale [1] = self.data.drawing.scale [2]
 	end
 	
-	self.ps:setEmitterLifetime (self.data.emitterLifetime)
 	self.ps:setEmissionRate (self.data.emissionRate)
 	self.ps:setAreaSpread (self.data.areaSpread.distribution, unpack (self.data.areaSpread.distance))
 	self.ps:setInsertMode (self.data.insertMode)
@@ -86,6 +85,10 @@ end
 
 local function _UpdateBufferSize (self)
 	self.ps:setBufferSize (self.data.bufferSize)
+end
+
+local function _UpdateEmitterLifetime (self)
+	self.ps:setEmitterLifetime (self.data.emitterLifetime)
 end
 
 local function _UpdateMember (self, type)
@@ -184,6 +187,8 @@ function _class:OnEvent (type, ...)
 		_UpdateMany (self)
 	elseif (type == "updateBufferSize") then
 		_UpdateBufferSize (self)
+	elseif (type == "updateEmitterLifetime") then
+		_UpdateEmitterLifetime (self)
 	elseif (type == "updateMember") then
 		_UpdateMember (self, ...)
 	elseif (type == "removeMember") then

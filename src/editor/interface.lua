@@ -71,6 +71,10 @@ function _class:Init (imgui, text)
 	}
 	
 	self.keepScale = false
+	
+	for k, v in pairs (self.imgui) do
+		print (k, v)
+	end
 end
 
 function _class:Update ()
@@ -123,7 +127,9 @@ function _class:DrawWidget ()
 				self.imgui.Spacing ()
 				
 				self:Title (necessity.emissionLifetime)
-					self:Drag ("Float", necessity.emissionLifetime.life, data, "emitterLifetime", 0.1, -1, _maxCount)
+					if (self:Drag ("Float", necessity.emissionLifetime.life, data, "emitterLifetime", 0.1, -1, _maxCount)) then
+						_RunObjectEvent ("updateEmitterLifetime")
+					end
 				self.imgui.Spacing ()
 				
 				self:Title (necessity.particleLifetime)
