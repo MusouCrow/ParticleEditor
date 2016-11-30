@@ -5,11 +5,11 @@ function _class:Init ()
 	local os = love.system.getOS ()
 	
 	if (os == "OS X") then
-		package.cpath = package.cpath .. ";./lib/mac/?.so"
+		package.cpath = package.cpath .. ";" .. _outputPath .. "lib/mac/?.so"
 	elseif (os == "Windows") then
-		package.cpath = package.cpath .. ";./lib/win32/?.dll"
+		package.cpath = package.cpath .. ";" .. _outputPath .. "lib/win32/?.dll"
 	elseif (os == "Linux") then
-		package.cpath = package.cpath .. ";./lib/ubt64/?.so"
+		package.cpath = package.cpath .. ";" .. _outputPath .. "lib/ubt64/?.so"
 	end
 	
 	self.cjson = require ("cjson")
