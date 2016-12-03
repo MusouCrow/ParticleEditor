@@ -120,6 +120,7 @@ function _class:Ctor (name, data)
 	
 	_UpdateMany (self)
 	_UpdateBufferSize (self)
+	_UpdateEmitterLifetime (self)
 	_UpdateMember (self, "colors")
 	_UpdateMember (self, "sizes")
 	_UpdateMember (self, "quads")

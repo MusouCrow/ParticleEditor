@@ -55,6 +55,7 @@ function _class:Init (imgui, text, slash)
 	self.imgui = imgui
 	self.slash = slash
 	self.widgetID = 0
+	self.inputMaxLen = 30
 	self.combo = {
 		areaSpread = {uniform = 1, normal = 2, ellipse = 3, none = 4},
 		insertMode = {top = 1, bottom = 2, random = 3},
@@ -307,7 +308,7 @@ function _class:DrawWidget ()
 						if (not hasRemoved) then
 							local pass
 							local name = _RunObjectEvent ("getName")
-							pass, name = self.imgui.InputText (hierarchy.operation.rename.input.title, name, 30)
+							pass, name = self.imgui.InputText (hierarchy.operation.rename.input.title, name, self.inputMaxLen)
 							if (pass) then
 								_RunObjectEvent ("setName", name)
 							end
@@ -615,6 +616,7 @@ function _class:Filedropped (file)
 		elseif (self.messageBox.type == "open") then
 			local data = _class:RunEvent ("makeJson", content)
 			local name = _CutString (name, ".json") [1]
+			name = string.sub (name, 1, self.inputMaxLen)
 			
 			_class:RunEvent ("objmgr_createObject", data, name)
 			self.messageBox.open = false
