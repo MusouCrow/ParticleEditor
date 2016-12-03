@@ -70,11 +70,9 @@ function _class:Init (imgui, text)
 		font = love.graphics.getFont ()
 	}
 	
-	self.keepScale = false
+	local content
 	
-	for k, v in pairs (self.imgui) do
-		print (k, v)
-	end
+	self.keepScale = false
 end
 
 function _class:Update ()
@@ -308,7 +306,7 @@ function _class:DrawWidget ()
 						if (not hasRemoved) then
 							local pass
 							local name = _RunObjectEvent ("getName")
-							pass, name = self.imgui.InputText (hierarchy.operation.rename.input.title, name, #name + 1)
+							pass, name = self.imgui.InputText (hierarchy.operation.rename.input.title, name, 30)
 							if (pass) then
 								_RunObjectEvent ("setName", name)
 							end
