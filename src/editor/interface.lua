@@ -151,6 +151,10 @@ function _class:DrawWidget ()
 					
 					self:Title (outward.offset)
 						self:Drag ("Int2", outward.offset.x_y, data.offset)
+						self.imgui.SameLine ()
+						if (self:Button (outward.offset.center)) then
+							_RunObjectEvent ("centerOffset")
+						end
 					self.imgui.Spacing ()
 					
 					self:Title (outward.direction)
@@ -219,6 +223,8 @@ function _class:DrawWidget ()
 					self.imgui.Spacing ()
 					
 					self:Title (drawing.origin)
+						self.imgui.SameLine ()
+						self:CheckBox (drawing.origin.show, setting, "drawOrigin")
 						self:Drag ("Int2", drawing.origin.param, data.drawing.origin)
 					self.imgui.Spacing ()
 					

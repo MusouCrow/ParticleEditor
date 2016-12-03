@@ -99,7 +99,11 @@
                 "x_y": {
                     "title": "x, y",
                     "tip": "The x (y) coordinate of the rotation offset."
-                }
+                },
+				"center": {
+					"title": "Center",
+					"tip": "Set the offset position to central."
+				}
             },
             "direction": {
                 "title": "Direction",
@@ -235,7 +239,11 @@
             "origin": {
                 "title": "Origin",
                 "tip": "Origin factor.",
-                "param": "x, y"
+                "param": "x, y",
+				"show": {
+					"title": "show",
+					"tip": "Show a point by the origin factor."
+				}
             },
             "shearing": {
                 "title": "Shearing",

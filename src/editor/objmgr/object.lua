@@ -108,12 +108,13 @@ function _class:Ctor (name, data)
 	self.name = name
 	self.data = _SetData (data)
 	self.setting = {
-		keepScale = false
+		keepScale = false,
+		drawOrigin = true
 	}
 	
 	self.id = 0
 	self.isPaused = false
-	self.texture = {name = "...", w = 0, h = 0}
+	self.texture = {name = "...", width = 0, height = 0}
 	
 	self.data.drawing.position [1] = love.graphics.getWidth () * 0.5
 	self.data.drawing.position [2] = love.graphics.getHeight () * 0.5
@@ -137,6 +138,12 @@ function _class:Draw ()
 	love.graphics.setBlendMode (drawing.blendmode.normal, drawing.blendmode.alpha)
 	love.graphics.setColor (drawing.color)
 	love.graphics.draw (self.ps, 0, 0, drawing.orientation, drawing.scale [1], drawing.scale [2], drawing.origin [1], drawing.origin [2], drawing.shearing [1], drawing.shearing [2])
+	
+	if (self.setting.drawOrigin) then
+		love.graphics.setBlendMode ("alpha")
+		love.graphics.setColor (255, 255, 255, 255)
+		love.graphics.circle ("line" , drawing.position [1] + drawing.origin [1], drawing.position [2] + drawing.origin [2], 5, 10)
+	end
 end
 
 function _class:Clone ()
@@ -265,6 +272,9 @@ function _class:OnEvent (type, ...)
 		
 		self.data.drawing.position [1] = param [1]
 		self.data.drawing.position [2] = param [2]
+	elseif (type == "centerOffset") then
+		self.data.offset [1] = self.texture.width * 0.5
+		self.data.offset [2] = self.texture.height * 0.5
 	end
 end
 
