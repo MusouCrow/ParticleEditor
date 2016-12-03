@@ -3,11 +3,13 @@ local _outputPath = love.filesystem.getSourceBaseDirectory() .. "/" .. love.file
 
 function _class:Init ()
 	local os = love.system.getOS ()
+	local slash = "/"
 	
 	if (os == "OS X") then
 		package.cpath = package.cpath .. ";" .. _outputPath .. "lib/mac/?.so"
 	elseif (os == "Windows") then
 		package.cpath = package.cpath .. ";" .. _outputPath .. "lib/win32/?.dll"
+		slash = [[\]]
 	elseif (os == "Linux") then
 		package.cpath = package.cpath .. ";" .. _outputPath .. "lib/ubt64/?.so"
 	end
@@ -35,7 +37,7 @@ function _class:Init ()
 	
 	self.objmgr:Init (self:OpenJson ("data.json"))
 	self.background:Init ()
-	self.interface:Init (require ("imgui"), self:OpenJson ("text/en.json"))
+	self.interface:Init (require ("imgui"), self:OpenJson ("text/en.json"), slash)
 end
 
 function _class:Update (dt)

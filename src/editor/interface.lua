@@ -48,11 +48,12 @@ local function _CutString (str, key)
 	return list
 end
 
-function _class:Init (imgui, text)
+function _class:Init (imgui, text, slash)
 	self.text = text
 	_HandleText (self.text)
 	
 	self.imgui = imgui
+	self.slash = slash
 	self.widgetID = 0
 	self.combo = {
 		areaSpread = {uniform = 1, normal = 2, ellipse = 3, none = 4},
@@ -601,7 +602,7 @@ function _class:Filedropped (file)
 	if (self.messageBox.open and file) then
 		local content = file:read ()
 		local fileName = file:getFilename ()
-		local strList = _CutString (fileName, "/")
+		local strList = _CutString (fileName, self.slash)
 		local name = strList [#strList]
 		
 		if (self.messageBox.type == "texture" or self.messageBox.type == "background") then
