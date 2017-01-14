@@ -58,7 +58,7 @@ function _class:CreateObject (data, name)
 	
 	if (name == nil) then
 		self.createCount = self.createCount + 1
-		name = tostring (self.createCount)
+		name = "new_" .. tostring (self.createCount)
 	end
 	
 	local obj = self.objectClass.New (name, data)
@@ -133,6 +133,12 @@ end
 function _class:RunSelectedObjectEvent (...)
 	if (self.selectedObject) then
 		return self.selectedObject:OnEvent (...)
+	end
+end
+
+function _class:RunAllObjectEvent (...)
+	for n=1, #self.objectList do
+		self.objectList [n]:OnEvent (...)
 	end
 end
 

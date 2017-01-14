@@ -1,5 +1,6 @@
 local _class = require ("src.class") ("interface", "src.editor", "src.sington")
 local _maxCount = 2147483647
+local _windowWidth = 345
 
 local function _RunObjectEvent (...)
 	return _class:RunEvent ("objmgr_runSelectedObjectEvent", ...)
@@ -103,8 +104,8 @@ function _class:DrawWidget ()
 	local hasTexture = _RunObjectEvent ("hasImage")
 	
 	if (data) then
-		self.imgui.SetNextWindowPos (love.graphics.getWidth () - 340, 0)
-		self.imgui.SetNextWindowSize (340, love.graphics.getHeight ())		
+		self.imgui.SetNextWindowPos (love.graphics.getWidth () - _windowWidth, 0)
+		self.imgui.SetNextWindowSize (_windowWidth, love.graphics.getHeight ())		
 		self.imgui.Begin (inspector.title, true, {"NoResize", "NoMove"})
 			local necessity = inspector.necessity
 			if (self.imgui.CollapsingHeader (necessity.title)) then
@@ -247,7 +248,7 @@ function _class:DrawWidget ()
 	end
 	
 	self.imgui.SetNextWindowPos (0, 0)
-	self.imgui.SetNextWindowSize (340, love.graphics.getHeight ())
+	self.imgui.SetNextWindowSize (_windowWidth, love.graphics.getHeight ())
 	self.imgui.Begin (synthesis.title, true, {"NoResize", "NoMove"})
 		local hierarchy = synthesis.hierarchy
 		if (self.imgui.CollapsingHeader (hierarchy.title)) then
@@ -640,9 +641,17 @@ end
 
 function _class:KeyPressed (key)
 	if (key == "space") then
-		_RunObjectEvent ("pause_resume")
+		if (love.keyboard.isDown ("lctrl")) then
+			_class:RunEvent ("objmgr_runAllObjectEvent", "pause_resume")
+		else
+			_RunObjectEvent ("pause_resume")
+		end
 	elseif (key == "return") then
-		_RunObjectEvent ("reset")
+		if (love.keyboard.isDown ("lctrl")) then
+			_class:RunEvent ("objmgr_runAllObjectEvent", "reset")
+		else
+			_RunObjectEvent ("reset")
+		end
 	elseif (key == "up") then
 		_class:RunEvent ("objmgr_orderObject", -1)
 	elseif (key == "down") then

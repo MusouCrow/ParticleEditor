@@ -19,8 +19,8 @@
 
 ### Keyboard Shortcuts
 
-* Space: Pause/Restart the Particle Object's animation.
-* Enter: Reset the Particle Object's animation.
+* Space: Pause/Restart the Particle Object's animation. (Hold **Left Ctrl** will to select all.)
+* Enter: Reset the Particle Object's animation. (Hold **Left Ctrl** will to select all.)
 * Up(Down) Arrow: Switch a Particle Object.
 * Right Click: Move the Particle Object.
 

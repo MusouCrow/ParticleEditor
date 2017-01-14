@@ -390,11 +390,11 @@
                 "title": "Keyboard Shortcuts",
 				"list": [
 					{
-						"title": "Space",
+						"title": "Space (Hold Left Ctrl will to select all.)",
 						"text": "Pause/Restart the Particle Object's animation."
 					},
 					{
-						"title": "Enter",
+						"title": "Enter (Hold Left Ctrl will to select all.)",
 						"text": "Reset the Particle Object's animation."
 					},
 					{
