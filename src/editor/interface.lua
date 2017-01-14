@@ -136,6 +136,10 @@ function _class:DrawWidget ()
 				self:Title (necessity.particleLifetime)
 					self:Drag ("Float2", necessity.particleLifetime.min_max, data.particleLifetime, nil, 0.1, 0, _maxCount)
 				self.imgui.Spacing ()
+				
+				self:Title (necessity.playingSpeed)
+					self:Drag ("Float", necessity.playingSpeed.speed, data, "playingSpeed", 0.1)
+				self.imgui.Spacing ()
 			end
 			
 			if (hasTexture) then

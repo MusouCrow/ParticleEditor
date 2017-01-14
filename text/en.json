@@ -58,7 +58,12 @@
                     "title": "min, max",
                     "tip": "The minimum (maximum) life of the particles (in seconds)."
                 }
-            }
+            },
+			"playingSpeed": {
+				"title": "Playing Speed",
+				"tip": "Sets the playing speed of the particles (in percentage).",
+				"speed": "speed"
+			}
         },
         "outward": {
             "title": "Outward",

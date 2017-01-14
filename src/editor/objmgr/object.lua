@@ -32,6 +32,8 @@ end
 local function _SetData (data)
 	local newData = _CopyTable (data)
 	
+	newData.playingSpeed = newData.playingSpeed or 1
+	
 	for n=1, #newData.quads do
 		local newQuad
 		
@@ -129,7 +131,7 @@ end
 
 function _class:Update (dt)
 	if (not self.isPaused) then
-		self.ps:update (dt)
+		self.ps:update (dt * self.data.playingSpeed)
 	end
 end
 

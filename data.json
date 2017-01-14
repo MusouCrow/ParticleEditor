@@ -3,6 +3,7 @@
     "emissionRate": 0,
 	"emitterLifetime": -1,
 	"particleLifetime": [0, 0],
+	"playingSpeed": 1,
     "areaSpread": {
         "distribution": "none",
 		"distance": [0, 0]
